@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKAR — Shop Zodiac Bundles</title>
+    <meta name="description" content="All 12 zodiac arsenals. Choose your destiny.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Page-specific styles */
+        .shop-section {
+            position: relative;
+            min-height: 100vh;
+            padding: 8rem 3rem 4rem;
+            z-index: 2;
+        }
+        
+        .shop-header {
+            text-align: center;
+            margin-bottom: 5rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+        
+        .shop-title {
+            font-family: var(--serif);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 400;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        
+        .shop-subtitle {
+            font-family: var(--sans);
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--gray-muted);
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+        }
+        
+        .zodiac-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .zodiac-card {
+            position: relative;
+            height: 400px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: var(--transition-medium);
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: calc(var(--index) * 0.05s);
+        }
+        
+        /* Set animation delays */
+        .zodiac-card:nth-child(1) { --index: 1; }
+        .zodiac-card:nth-child(2) { --index: 2; }
+        .zodiac-card:nth-child(3) { --index: 3; }
+        .zodiac-card:nth-child(4) { --index: 4; }
+        .zodiac-card:nth-child(5) { --index: 5; }
+        .zodiac-card:nth-child(6) { --index: 6; }
+        .zodiac-card:nth-child(7) { --index: 7; }
+        .zodiac-card:nth-child(8) { --index: 8; }
+        .zodiac-card:nth-child(9) { --index: 9; }
+        .zodiac-card:nth-child(10) { --index: 10; }
+        .zodiac-card:nth-child(11) { --index: 11; }
+        .zodiac-card:nth-child(12) { --index: 12; }
+        
+        .zodiac-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .card-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.9;
+            transition: var(--transition-medium);
+        }
+        
+        .zodiac-card:hover .card-background {
+            opacity: 1;
+        }
+        
+        .card-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            box-shadow: inset 0 0 50px rgba(255,255,255,0.1);
+            transition: var(--transition-medium);
+            pointer-events: none;
+        }
+        
+        .zodiac-card:hover .card-glow {
+            opacity: 1;
+        }
+        
+        .card-content {
+            position: relative;
+            z-index: 2;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 2.5rem;
+            color: var(--white-pure);
+        }
+        
+        .sign-name {
+            font-family: var(--serif);
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+        }
+        
+        .scent-list {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        
+        .scent-item {
+            font-family: var(--sans);
+            font-size: 0.875rem;
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            opacity: 0.9;
+        }
+        
+        .acquire-button {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: var(--white-pure);
+            padding: 1rem 2rem;
+            font-family: var(--sans);
+            font-size: 0.75rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition-fast);
+            align-self: stretch;
+        }
+        
+        .acquire-button:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        /* Element-specific card styles */
+        .fire-card .card-background {
+            background: linear-gradient(135deg, var(--fire-red) 0%, #4B0000 100%);
+        }
+        
+        .earth-card .card-background {
+            background: linear-gradient(135deg, var(--earth-nude) 0%, #8B7355 100%);
+        }
+        
+        .air-card .card-background {
+            background: linear-gradient(135deg, #1a1a1a 0%, var(--black-pure) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .water-card .card-background {
+            background: linear-gradient(135deg, var(--water-blue) 0%, #000A1A 100%);
+        }
+        
+        /* Navigation */
+        .nav-links {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            z-index: 10;
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-link {
+            font-family: var(--sans);
+            font-size: 0.875rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-muted);
+            text-decoration: none;
+            transition: var(--transition-fast);
+        }
+        
+        .nav-link:hover {
+            color: var(--white-pure);
+        }
+        
+        @media (max-width: 768px) {
+            .shop-section {
+                padding: 6rem 1.5rem 3rem;
+            }
+            
+            .zodiac-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Smoke Texture Background -->
+    <div class="smoke-container">
+        <div class="smoke-layer smoke-1"></div>
+        <div class="smoke-layer smoke-2"></div>
+        <div class="smoke-layer smoke-3"></div>
+        <div class="smoke-layer smoke-4"></div>
+    </div>
+    
+    <!-- Secret Society Symbol -->
+    <div class="secret-symbol" aria-hidden="true">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+            <polygon points="50,20 65,40 60,65 40,65 35,40" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+        </svg>
+    </div>
+    
+    <!-- Navigation -->
+    <nav class="nav-links">
+        <a href="index.html" class="nav-link">HOME</a>
+        <a href="birth-date.html" class="nav-link">FIND YOUR SIGN</a>
+    </nav>
+    
+    <!-- Shop Section -->
+    <section class="shop-section">
+        <div class="shop-header">
+            <h1 class="shop-title">ZODIAC ARSENALS</h1>
+            <p class="shop-subtitle">Choose your constellation</p>
+        </div>
+        
+        <div class="zodiac-grid" id="zodiacGrid">
+            <!-- Cards will be dynamically generated -->
+        </div>
+    </section>
+    
+    <script src="zodiac.js"></script>
+    <script>
+        // Generate zodiac cards
+        const gridContainer = document.getElementById('zodiacGrid');
+        const signOrder = ['aries', 'taurus', 'gemini', 'cancer', 'leo', 'virgo', 
+                          'libra', 'scorpio', 'sagittarius', 'capricorn', 'aquarius', 'pisces'];
+        
+        signOrder.forEach((signKey, index) => {
+            const data = zodiacData[signKey];
+            
+            const card = document.createElement('article');
+            card.className = `zodiac-card ${data.element}-card`;
+            card.innerHTML = `
+                <div class="card-background"></div>
+                <div class="card-glow"></div>
+                <div class="card-content">
+                    <h2 class="sign-name">${data.name}</h2>
+                    <div class="scent-list">
+                        ${data.scents.map(scent => `<p class="scent-item">${scent}</p>`).join('')}
+                    </div>
+                    <button class="acquire-button" data-sign="${signKey}">ACQUIRE</button>
+                </div>
+            `;
+            
+            gridContainer.appendChild(card);
+        });
+        
+        // Add click handlers
+        document.querySelectorAll('.acquire-button').forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const sign = e.target.dataset.sign;
+                const data = zodiacData[sign];
+                
+                // Store bundle data
+                sessionStorage.setItem('selectedBundle', JSON.stringify({
+                    sign: data.name,
+                    scents: data.scents,
+                    element: data.element,
+                    elementColor: data.elementColor
+                }));
+                
+                // Transition to checkout
+                document.body.style.opacity = '0';
+                setTimeout(() => {
+                    window.location.href = 'checkout.html';
+                }, 500);
+            });
+        });
+        
+        // Add card click handlers for more info
+        document.querySelectorAll('.zodiac-card').forEach((card, index) => {
+            card.addEventListener('click', (e) => {
+                if (!e.target.classList.contains('acquire-button')) {
+                    // Add a subtle glitch effect
+                    card.style.animation = 'glitchActive 0.3s ease';
+                    setTimeout(() => {
+                        card.style.animation = '';
+                    }, 300);
+                }
+            });
+        });
+        
+        // Enhanced smoke parallax
+        let mouseX = 0;
+        let mouseY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+        
+        function animateSmoke() {
+            currentX += (mouseX - currentX) * 0.05;
+            currentY += (mouseY - currentY) * 0.05;
+            
+            const smokeLayers = document.querySelectorAll('.smoke-layer');
+            smokeLayers.forEach((layer, index) => {
+                const speed = (index + 1) * 10;
+                const x = currentX * speed;
+                const y = currentY * speed;
+                
+                layer.style.transform = `translate(${x}px, ${y}px)`;
+            });
+            
+            requestAnimationFrame(animateSmoke);
+        }
+        
+        animateSmoke();
+    </script>
+</body>
+</html>
+
+

@@ -1,418 +1,461 @@
-// Global mouse position
-let mouseX = 0;
-let mouseY = 0;
+// Shopping Cart State
+let cart = [];
+let cartOpen = false;
+let menuOpen = false;
 
-document.addEventListener('mousemove', (e) => {
-    mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-    mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-});
+// DOM Elements
+const menuToggle = document.querySelector('.menu-toggle');
+const searchToggle = document.querySelector('.search-toggle');
+const cartToggle = document.querySelector('.cart-toggle');
+const cartClose = document.querySelector('.cart-close');
+const cartSidebar = document.getElementById('cartSidebar');
+const menuSidebar = document.getElementById('menuSidebar');
+const cartItems = document.getElementById('cartItems');
+const cartCount = document.querySelector('.cart-count');
+const productCards = document.querySelectorAll('.product-card');
+const exclusiveButton = document.querySelector('.exclusive-button');
+const checkoutButton = document.querySelector('.checkout-button');
 
-// Initialize on DOM load
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    // Lock body scroll initially
-    document.body.classList.add('spirit-locked');
-    
-    // Hide loading screen after delay
-    setTimeout(() => {
-        const loadingScreen = document.querySelector('.loading-screen');
-        if (loadingScreen) {
-            loadingScreen.classList.add('hide');
-        }
-    }, 2000);
-    
-    // Initialize spirit portal
-    initSpiritPortal();
-    
-    // Initialize Intersection Observer for text reveals
-    initTextReveals();
-    
-    // Initialize smooth scrolling behavior
-    initSmoothScroll();
+    initializeEventListeners();
+    initializeAnimations();
+    loadCartFromStorage();
 });
 
-// Text reveal animations
-function initTextReveals() {
+// Event Listeners
+function initializeEventListeners() {
+    // Menu Toggle
+    menuToggle?.addEventListener('click', toggleMenu);
+    
+    // Cart Toggle
+    cartToggle?.addEventListener('click', toggleCart);
+    cartClose?.addEventListener('click', closeCart);
+    
+    // Product Cards
+    productCards.forEach((card, index) => {
+        card.addEventListener('click', () => handleProductClick(card, index));
+        
+        // Add hover sound effect (optional)
+        card.addEventListener('mouseenter', () => {
+            card.style.setProperty('--hover-delay', `${index * 0.05}s`);
+        });
+    });
+    
+    // Exclusive Button
+    exclusiveButton?.addEventListener('click', handleExclusiveAccess);
+    
+    // Checkout Button
+    checkoutButton?.addEventListener('click', handleCheckout);
+    
+    // Search Toggle
+    searchToggle?.addEventListener('click', handleSearch);
+    
+    // Close sidebars on outside click
+    document.addEventListener('click', (e) => {
+        if (cartOpen && !cartSidebar.contains(e.target) && !cartToggle.contains(e.target)) {
+            closeCart();
+        }
+        if (menuOpen && !menuSidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+            closeMenu();
+        }
+    });
+    
+    // Escape key to close sidebars
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            if (cartOpen) closeCart();
+            if (menuOpen) closeMenu();
+        }
+    });
+}
+
+// Menu Functions
+function toggleMenu() {
+    menuOpen = !menuOpen;
+    menuSidebar.classList.toggle('active');
+    document.body.style.overflow = menuOpen ? 'hidden' : '';
+}
+
+function closeMenu() {
+    menuOpen = false;
+    menuSidebar.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Cart Functions
+function toggleCart() {
+    cartOpen = !cartOpen;
+    cartSidebar.classList.toggle('active');
+    document.body.style.overflow = cartOpen ? 'hidden' : '';
+}
+
+function closeCart() {
+    cartOpen = false;
+    cartSidebar.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Product Functions
+function handleProductClick(card, index) {
+    const productName = card.querySelector('.product-name').textContent;
+    const productPrice = card.querySelector('.product-price').textContent;
+    const productElement = card.dataset.element;
+    
+    // Add glitch effect on click
+    addGlitchEffect(card);
+    
+    // Add to cart
+    addToCart({
+        id: Date.now(),
+        name: productName,
+        price: productPrice,
+        element: productElement,
+        quantity: 1
+    });
+    
+    // Visual feedback
+    const quickView = card.querySelector('.quick-view');
+    quickView.textContent = 'ADDED';
+    setTimeout(() => {
+        quickView.textContent = 'EXPLORE';
+    }, 1000);
+}
+
+// Cart Management
+function addToCart(product) {
+    const existingItem = cart.find(item => item.name === product.name);
+    
+    if (existingItem) {
+        existingItem.quantity++;
+    } else {
+        cart.push(product);
+    }
+    
+    updateCartUI();
+    saveCartToStorage();
+    
+    // Pulse cart icon
+    cartToggle.classList.add('pulse');
+    setTimeout(() => {
+        cartToggle.classList.remove('pulse');
+    }, 600);
+}
+
+function updateCartUI() {
+    cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+    
+    if (cart.length === 0) {
+        cartItems.innerHTML = '<p class="cart-empty">Your collection awaits</p>';
+        return;
+    }
+    
+    cartItems.innerHTML = cart.map(item => `
+        <div class="cart-item" data-id="${item.id}">
+            <div class="cart-item-info">
+                <h4 class="cart-item-name">${item.name}</h4>
+                <p class="cart-item-element">${item.element}</p>
+            </div>
+            <div class="cart-item-details">
+                <div class="cart-item-quantity">
+                    <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                    <span>${item.quantity}</span>
+                    <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                </div>
+                <p class="cart-item-price">${item.price}</p>
+            </div>
+        </div>
+    `).join('');
+    
+    // Add event listeners to quantity buttons
+    document.querySelectorAll('.quantity-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const itemId = parseInt(e.target.dataset.id);
+            const isPlus = e.target.classList.contains('plus');
+            updateQuantity(itemId, isPlus);
+        });
+    });
+}
+
+function updateQuantity(itemId, increase) {
+    const item = cart.find(item => item.id === itemId);
+    if (!item) return;
+    
+    if (increase) {
+        item.quantity++;
+    } else {
+        item.quantity--;
+        if (item.quantity <= 0) {
+            cart = cart.filter(item => item.id !== itemId);
+        }
+    }
+    
+    updateCartUI();
+    saveCartToStorage();
+}
+
+// Storage Functions
+function saveCartToStorage() {
+    localStorage.setItem('skar-cart', JSON.stringify(cart));
+}
+
+function loadCartFromStorage() {
+    const savedCart = localStorage.getItem('skar-cart');
+    if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCartUI();
+    }
+}
+
+// Other Functions
+function handleExclusiveAccess() {
+    // Add glitch transition
+    document.body.classList.add('glitch-transition');
+    
+    setTimeout(() => {
+        document.body.classList.remove('glitch-transition');
+        // In a real implementation, this would open a modal or navigate to exclusive section
+        console.log('Accessing exclusive collection...');
+    }, 500);
+}
+
+function handleCheckout() {
+    if (cart.length === 0) return;
+    
+    // Add fade transition
+    document.body.style.opacity = '0';
+    
+    setTimeout(() => {
+        // In a real implementation, this would proceed to checkout
+        console.log('Proceeding to checkout:', cart);
+        document.body.style.opacity = '1';
+    }, 800);
+}
+
+function handleSearch() {
+    // Add search functionality
+    console.log('Opening search...');
+}
+
+// Animation Functions
+function initializeAnimations() {
+    // Intersection Observer for fade-in animations
     const observerOptions = {
-        threshold: 0.2,
-        rootMargin: '0px 0px -100px 0px'
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
     };
     
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                // Manifesto lines
-                if (entry.target.classList.contains('manifesto-line')) {
-                    const delay = entry.target.dataset.delay || 0;
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, delay * 1000);
-                }
-                
-                // Chapter elements
-                if (entry.target.classList.contains('chapter-title')) {
-                    entry.target.classList.add('visible');
-                    
-                    // Reveal chapter texts sequentially
-                    const texts = entry.target.parentElement.querySelectorAll('.reveal-text');
-                    texts.forEach((text, index) => {
-                        setTimeout(() => {
-                            text.classList.add('visible');
-                        }, 300 + (index * 200));
-                    });
-                }
-                
-                
-                // Finale elements
-                if (entry.target.classList.contains('finale-text')) {
-                    entry.target.classList.add('visible');
-                    const tagline = entry.target.parentElement.querySelector('.finale-tagline');
-                    if (tagline) {
-                        setTimeout(() => {
-                            tagline.classList.add('visible');
-                        }, 800);
-                    }
-                }
-                
-                
-                // Whisper lines (prelude)
-                if (entry.target.classList.contains('whisper')) {
-                    const delay = entry.target.dataset.delay || 0;
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, delay * 1000);
-                }
-                
-                
-                // Diary entries
-                if (entry.target.classList.contains('diary-text')) {
-                    const texts = entry.target.parentElement.querySelectorAll('.diary-text');
-                    texts.forEach((text, index) => {
-                        setTimeout(() => {
-                            text.classList.add('visible');
-                        }, index * 300);
-                    });
-                }
-                
-                // Truth reveals
-                if (entry.target.classList.contains('truth-reveal')) {
-                    const truths = document.querySelectorAll('.truth-reveal');
-                    truths.forEach((truth, index) => {
-                        setTimeout(() => {
-                            truth.classList.add('visible');
-                        }, index * 400);
-                    });
-                }
-                
-                // Saga timeline
-                if (entry.target.classList.contains('saga-item')) {
-                    const items = document.querySelectorAll('.saga-item');
-                    items.forEach((item, index) => {
-                        setTimeout(() => {
-                            item.style.opacity = '1';
-                            item.style.transform = 'translateY(0)';
-                        }, index * 100);
-                    });
-                }
-                
-                // Revelation lines
-                if (entry.target.classList.contains('reveal-line')) {
-                    const lines = entry.target.parentElement.querySelectorAll('.reveal-line');
-                    lines.forEach((line, index) => {
-                        setTimeout(() => {
-                            line.classList.add('visible');
-                        }, index * 300);
-                    });
-                }
-                
-                // Revelation title
-                if (entry.target.classList.contains('revelation-title')) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-                
-                // Echo texts
-                if (entry.target.classList.contains('echo-text')) {
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, 500);
-                }
+                entry.target.style.animationPlayState = 'running';
+                observer.unobserve(entry.target);
             }
         });
     }, observerOptions);
     
-    // Observe all reveal elements
-    document.querySelectorAll('.whisper, .chapter-title, .finale-text, .diary-text, .truth-reveal, .saga-item, .echo-text, .reveal-line, .revelation-title').forEach(el => {
+    // Observe elements with animations
+    document.querySelectorAll('.product-card, .collection-header, .exclusive-content').forEach(el => {
+        el.style.animationPlayState = 'paused';
         observer.observe(el);
     });
-    
-    // Initialize additional interactions
-    initInteractions();
-    
-    // Initialize horizontal saga scroll
-    initSagaScroll();
 }
 
-// Horizontal Saga Scroll
-function initSagaScroll() {
-    const sagaTrack = document.querySelector('.saga-track');
-    if (!sagaTrack) return;
+// Glitch Effect
+function addGlitchEffect(element) {
+    element.classList.add('glitch-active');
     
-    // Mouse wheel horizontal scroll
-    sagaTrack.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        sagaTrack.scrollLeft += e.deltaY;
-    });
-    
-    // Touch gestures for mobile
-    let isDown = false;
-    let startX;
-    let scrollLeft;
-    
-    sagaTrack.addEventListener('mousedown', (e) => {
-        isDown = true;
-        sagaTrack.style.cursor = 'grabbing';
-        startX = e.pageX - sagaTrack.offsetLeft;
-        scrollLeft = sagaTrack.scrollLeft;
-    });
-    
-    sagaTrack.addEventListener('mouseleave', () => {
-        isDown = false;
-        sagaTrack.style.cursor = 'grab';
-    });
-    
-    sagaTrack.addEventListener('mouseup', () => {
-        isDown = false;
-        sagaTrack.style.cursor = 'grab';
-    });
-    
-    sagaTrack.addEventListener('mousemove', (e) => {
-        if (!isDown) return;
-        e.preventDefault();
-        const x = e.pageX - sagaTrack.offsetLeft;
-        const walk = (x - startX) * 2;
-        sagaTrack.scrollLeft = scrollLeft - walk;
-    });
-    
-    // Parallax effect on cards
-    sagaTrack.addEventListener('scroll', () => {
-        const cards = document.querySelectorAll('.saga-card');
-        cards.forEach((card, index) => {
-            const rect = card.getBoundingClientRect();
-            const centerX = window.innerWidth / 2;
-            const cardCenterX = rect.left + rect.width / 2;
-            const distance = Math.abs(centerX - cardCenterX);
-            const scale = 1 - (distance / window.innerWidth) * 0.2;
-            const opacity = 1 - (distance / window.innerWidth) * 0.5;
-            
-            card.style.transform = `scale(${Math.max(0.8, scale)})`;
-            card.style.opacity = Math.max(0.5, opacity);
-        });
-    });
-    
-    // Initial position
     setTimeout(() => {
-        sagaTrack.scrollLeft = 0;
-    }, 100);
+        element.classList.remove('glitch-active');
+    }, 300);
 }
 
-// Spirit Portal Interaction
-function initSpiritPortal() {
-    const spiritRealm = document.querySelector('.spirit-realm');
-    const spiritContainer = document.querySelector('.spirit-container');
-    const spiritCore = document.querySelector('.spirit-core');
+// Enhanced Smoke Parallax
+let mouseX = 0;
+let mouseY = 0;
+let currentX = 0;
+let currentY = 0;
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+});
+
+// Smooth parallax animation
+function animateSmoke() {
+    currentX += (mouseX - currentX) * 0.05;
+    currentY += (mouseY - currentY) * 0.05;
     
-    // Magnetic attraction and glow on mouse move
-    spiritRealm?.addEventListener('mousemove', (e) => {
-        if (!spiritContainer || !spiritCore) return;
+    const smokeLayers = document.querySelectorAll('.smoke-layer');
+    smokeLayers.forEach((layer, index) => {
+        const speed = (index + 1) * 10;
+        const x = currentX * speed;
+        const y = currentY * speed;
         
-        const rect = spiritContainer.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const distance = Math.hypot(e.clientX - centerX, e.clientY - centerY);
-        
-        const intensity = Math.max(0, 1 - distance / 400);
-        const pullX = (e.clientX - centerX) * intensity * 0.05;
-        const pullY = (e.clientY - centerY) * intensity * 0.05;
-        
-        spiritCore.style.filter = `blur(${30 - intensity * 15}px)`;
-        spiritCore.style.transform = `scale(${1 + intensity * 0.3}) translate(${pullX}px, ${pullY}px)`;
-        
-        // Make wounds more visible when close
-        document.querySelectorAll('.wound').forEach(wound => {
-            wound.style.opacity = intensity * 0.5;
-        });
+        layer.style.transform = `translate(${x}px, ${y}px)`;
     });
     
-    // Enter the spirit
-    spiritContainer?.addEventListener('click', () => {
-        // Add entering animation
-        spiritRealm.classList.add('entering');
-        
-        // Unlock scrolling after animation
-        setTimeout(() => {
-            document.body.classList.remove('spirit-locked');
-            spiritRealm.style.display = 'none';
-            
-            // Smooth scroll to pure landing
-            setTimeout(() => {
-                const pureLanding = document.querySelector('.pure-landing');
-                if (pureLanding) {
-                    pureLanding.scrollIntoView({ 
-                        behavior: 'smooth',
-                        block: 'center'
-                    });
-                }
-            }, 500);
-        }, 2000);
-    });
-    
-    // Add hover sound effect simulation
-    let hoverSound = false;
-    spiritContainer?.addEventListener('mouseenter', () => {
-        if (!hoverSound) {
-            hoverSound = true;
-            // Add visual feedback for hover
-            document.querySelectorAll('.wound').forEach((wound, index) => {
-                setTimeout(() => {
-                    wound.style.opacity = '0.8';
-                    setTimeout(() => {
-                        wound.style.opacity = '';
-                    }, 500);
-                }, index * 100);
-            });
-        }
-    });
-    
-    spiritContainer?.addEventListener('mouseleave', () => {
-        hoverSound = false;
-    });
+    requestAnimationFrame(animateSmoke);
 }
 
-// Initialize smooth scrolling
-function initSmoothScroll() {
-    // Optional: Add smooth scroll behavior to all internal links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-}
+animateSmoke();
 
-// Scroll-based animations like Apple
-window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-    const windowHeight = window.innerHeight;
+// Secret Society Easter Egg
+let secretCode = [];
+const secretSequence = ['s', 'k', 'a', 'r'];
+
+document.addEventListener('keydown', (e) => {
+    secretCode.push(e.key.toLowerCase());
+    secretCode = secretCode.slice(-4);
     
-    
-    // Animate product mockups based on scroll position
-    document.querySelectorAll('.product-mockup').forEach((mockup, index) => {
-        const rect = mockup.getBoundingClientRect();
-        const center = rect.top + rect.height / 2;
-        const screenCenter = windowHeight / 2;
-        const distance = center - screenCenter;
-        
-        // Calculate progress (-1 to 1, where 0 is center of screen)
-        const progress = distance / (windowHeight / 2);
-        
-        // Scale effect - larger when in center of viewport
-        const scale = 1 - Math.abs(progress) * 0.08;
-        mockup.style.transform = `scale(${scale})`;
-        
-        // Opacity for far items
-        const itemOpacity = 1 - Math.abs(progress) * 0.2;
-        mockup.style.opacity = Math.max(0.5, itemOpacity);
-    });
-    
-    // Animate product text based on scroll
-    document.querySelectorAll('.product').forEach((product, index) => {
-        const rect = product.getBoundingClientRect();
-        const text = product.querySelector('.product-text');
-        const h2 = text.querySelector('h2');
-        const p = text.querySelector('p');
-        
-        const center = rect.top + rect.height / 2;
-        const screenCenter = windowHeight / 2;
-        const distance = center - screenCenter;
-        const progress = distance / (windowHeight / 2);
-        
-        // Text animations
-        if (Math.abs(progress) < 0.5) {
-            h2.style.transform = `translateY(${progress * 30}px)`;
-            h2.style.opacity = 1 - Math.abs(progress);
-            
-            p.style.transform = `translateY(${progress * 20}px)`;
-            p.style.opacity = (1 - Math.abs(progress)) * 0.8;
-        }
-    });
-    
-    // Parallax for chapter numbers
-    document.querySelectorAll('.chapter-number').forEach(number => {
-        const rect = number.getBoundingClientRect();
-        const speed = 0.5;
-        const yPos = -(scrolled - rect.top) * speed;
-        number.style.transform = `translateY(${yPos * 0.1}px)`;
-    });
-    
-    
-    // Spirit realm check - don't run scroll effects if spirit is active
-    const spiritRealm = document.querySelector('.spirit-realm');
-    if (spiritRealm && !spiritRealm.classList.contains('entering')) {
-        return; // Exit early if spirit realm is still active
+    if (secretCode.join('') === secretSequence.join('')) {
+        activateSecretMode();
     }
 });
 
-
-// Parallax for floating silhouettes
-window.addEventListener('scroll', () => {
-    const silhouettes = document.querySelectorAll('.floating-silhouette');
-    const scrolled = window.scrollY;
+function activateSecretMode() {
+    document.body.classList.add('secret-mode');
     
-    silhouettes.forEach(silhouette => {
-        const rect = silhouette.getBoundingClientRect();
-        const speed = 0.5;
-        const yPos = -(scrolled - rect.top) * speed;
-        silhouette.style.transform = `translateY(${-50 + yPos * 0.1}%) translateX(${20 + Math.sin(scrolled * 0.001) * 10}px)`;
-        
-        // Show when in view
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-            silhouette.classList.add('visible');
-        }
-    });
-});
-
-// Interactive elements
-function initInteractions() {
+    // Add special effects
+    const symbol = document.querySelector('.secret-symbol');
+    symbol.style.opacity = '0.1';
+    symbol.style.animation = 'symbolRotate 10s linear infinite, pulse 2s ease-in-out infinite';
     
-    
-    // Apple Pay button interactions
-    const applePayButtons = document.querySelectorAll('.apple-pay-button');
-    applePayButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const product = this.dataset.product;
-            const price = this.dataset.price;
-            
-            // Quick scale animation
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 100);
-            
-            // In a real implementation, this would trigger Apple Pay
-            // For now, we just show visual feedback
-            
-            // Subtle feedback
-            this.style.boxShadow = '0 1px 3px rgba(255,255,255,0.15)';
-            setTimeout(() => {
-                this.style.boxShadow = '';
-            }, 200);
-        });
-    });
-    
+    setTimeout(() => {
+        document.body.classList.remove('secret-mode');
+        symbol.style.opacity = '0.03';
+        symbol.style.animation = 'symbolRotate 300s linear infinite';
+    }, 5000);
 }
+
+// Add CSS for cart items dynamically
+const style = document.createElement('style');
+style.textContent = `
+    .cart-item {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .cart-item:last-child {
+        border-bottom: none;
+    }
+    
+    .cart-item-name {
+        font-family: var(--serif);
+        font-size: 1.125rem;
+        font-weight: 400;
+        margin-bottom: 0.25rem;
+    }
+    
+    .cart-item-element {
+        font-size: 0.75rem;
+        color: var(--gray-muted);
+        text-transform: capitalize;
+    }
+    
+    .cart-item-details {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+    
+    .cart-item-quantity {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .quantity-btn {
+        background: none;
+        border: 1px solid rgba(255,255,255,0.2);
+        color: var(--white-pure);
+        width: 24px;
+        height: 24px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+    
+    .quantity-btn:hover {
+        border-color: var(--white-pure);
+        background: rgba(255,255,255,0.1);
+    }
+    
+    .cart-item-price {
+        font-weight: 300;
+        letter-spacing: 0.05em;
+    }
+    
+    .pulse {
+        animation: pulse 0.6s ease;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    .glitch-active {
+        animation: glitchActive 0.3s ease;
+    }
+    
+    @keyframes glitchActive {
+        0%, 100% { 
+            transform: translate(0, 0);
+            filter: none;
+        }
+        20% { 
+            transform: translate(-2px, 2px);
+            filter: hue-rotate(90deg);
+        }
+        40% { 
+            transform: translate(2px, -2px);
+            filter: hue-rotate(180deg);
+        }
+        60% { 
+            transform: translate(-1px, 1px);
+            filter: hue-rotate(270deg);
+        }
+        80% { 
+            transform: translate(1px, -1px);
+            filter: hue-rotate(360deg);
+        }
+    }
+    
+    .glitch-transition {
+        animation: glitchTransition 0.5s ease;
+    }
+    
+    @keyframes glitchTransition {
+        0%, 100% { 
+            filter: none;
+            opacity: 1;
+        }
+        25% { 
+            filter: contrast(2) brightness(2);
+            opacity: 0.9;
+        }
+        50% { 
+            filter: contrast(0.5) brightness(0.5);
+            opacity: 0.7;
+        }
+        75% { 
+            filter: contrast(1.5) brightness(1.5) hue-rotate(180deg);
+            opacity: 0.8;
+        }
+    }
+    
+    .secret-mode {
+        animation: secretReveal 5s ease;
+    }
+    
+    @keyframes secretReveal {
+        0%, 100% { filter: none; }
+        50% { filter: invert(1) hue-rotate(180deg); }
+    }
+`;
+
+document.head.appendChild(style);

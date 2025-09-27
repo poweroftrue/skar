@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKAR — Complete Your Acquisition</title>
+    <meta name="description" content="Final step. No turning back.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&family=Inter:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Page-specific styles */
+        .checkout-section {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            padding: 4rem 2rem;
+        }
+        
+        .checkout-container {
+            max-width: 500px;
+            width: 100%;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+        
+        .checkout-title {
+            font-family: var(--serif);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            text-align: center;
+            margin-bottom: 3rem;
+            letter-spacing: 0.05em;
+        }
+        
+        .order-summary {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.8s forwards;
+        }
+        
+        .summary-title {
+            font-family: var(--sans);
+            font-size: 0.875rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-muted);
+            margin-bottom: 1rem;
+        }
+        
+        .bundle-info {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .bundle-scents {
+            font-family: var(--sans);
+            font-size: 0.875rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.7);
+            line-height: 1.8;
+        }
+        
+        .checkout-form {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease forwards;
+        }
+        
+        .form-group:nth-child(1) { animation-delay: 1s; }
+        .form-group:nth-child(2) { animation-delay: 1.1s; }
+        .form-group:nth-child(3) { animation-delay: 1.2s; }
+        
+        .form-label {
+            font-family: var(--sans);
+            font-size: 0.75rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-muted);
+        }
+        
+        .form-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            color: var(--white-pure);
+            font-family: var(--sans);
+            font-size: 1rem;
+            font-weight: 300;
+            padding: 0.75rem 0;
+            transition: var(--transition-fast);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-bottom-color: var(--white-pure);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+        
+        .form-textarea {
+            resize: none;
+            min-height: 80px;
+        }
+        
+        .payment-fields {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .warning-text {
+            font-family: var(--sans);
+            font-size: 0.75rem;
+            font-weight: 200;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            text-align: center;
+            color: var(--gray-muted);
+            margin: 3rem 0 2rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1.5s forwards;
+        }
+        
+        .complete-button {
+            background: transparent;
+            border: 1px solid var(--white-pure);
+            color: var(--white-pure);
+            padding: 1.25rem 3rem;
+            font-family: var(--sans);
+            font-size: 0.875rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-medium);
+            width: 100%;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1.8s forwards;
+        }
+        
+        .complete-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,255,255,0.1);
+        }
+        
+        .complete-button:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        /* Loading state */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black-pure);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .loading-text {
+            font-family: var(--serif);
+            font-size: 1.5rem;
+            letter-spacing: 0.2em;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Back link */
+        .back-link {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            font-family: var(--sans);
+            font-size: 0.875rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--gray-muted);
+            text-decoration: none;
+            transition: var(--transition-fast);
+            z-index: 10;
+        }
+        
+        .back-link:hover {
+            color: var(--white-pure);
+        }
+        
+        @media (max-width: 768px) {
+            .payment-fields {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkout-container {
+                padding: 0 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Smoke Texture Background -->
+    <div class="smoke-container">
+        <div class="smoke-layer smoke-1"></div>
+        <div class="smoke-layer smoke-2"></div>
+        <div class="smoke-layer smoke-3"></div>
+        <div class="smoke-layer smoke-4"></div>
+    </div>
+    
+    <!-- Secret Society Symbol -->
+    <div class="secret-symbol" aria-hidden="true">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+            <polygon points="50,20 65,40 60,65 40,65 35,40" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.1"/>
+        </svg>
+    </div>
+    
+    <!-- Back Link -->
+    <a href="shop.html" class="back-link">← CANCEL</a>
+    
+    <!-- Checkout Section -->
+    <section class="checkout-section">
+        <div class="checkout-container">
+            <h1 class="checkout-title">Confirm Your Arsenal</h1>
+            
+            <!-- Order Summary -->
+            <div class="order-summary" id="orderSummary">
+                <p class="summary-title">YOUR SELECTION</p>
+                <h2 class="bundle-info" id="bundleInfo"></h2>
+                <p class="bundle-scents" id="bundleScents"></p>
+            </div>
+            
+            <!-- Checkout Form -->
+            <form id="checkoutForm" class="checkout-form">
+                <div class="form-group">
+                    <label for="name" class="form-label">Name</label>
+                    <input type="text" id="name" class="form-input" placeholder="Full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="address" class="form-label">Address</label>
+                    <textarea id="address" class="form-input form-textarea" placeholder="Shipping address" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Payment</label>
+                    <div class="payment-fields">
+                        <input type="text" class="form-input" placeholder="Card number" pattern="[0-9\s]{13,19}" required>
+                        <input type="text" class="form-input" placeholder="MM/YY" pattern="[0-9]{2}/[0-9]{2}" required>
+                        <input type="text" class="form-input" placeholder="CVV" pattern="[0-9]{3,4}" required>
+                    </div>
+                </div>
+                
+                <p class="warning-text">No returns. No second chances.</p>
+                
+                <button type="submit" class="complete-button">
+                    <span class="button-text">COMPLETE ACQUISITION</span>
+                    <span class="button-glow"></span>
+                </button>
+            </form>
+        </div>
+    </section>
+    
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <p class="loading-text">PROCESSING RITUAL...</p>
+    </div>
+    
+    <script>
+        // Get bundle data from session storage
+        const bundleData = JSON.parse(sessionStorage.getItem('selectedBundle') || '{}');
+        
+        if (!bundleData.sign) {
+            // No bundle selected, redirect to shop
+            window.location.href = 'shop.html';
+        } else {
+            // Display bundle info
+            document.getElementById('bundleInfo').textContent = `${bundleData.sign} ARSENAL`;
+            document.getElementById('bundleScents').textContent = bundleData.scents.join(' • ');
+            
+            // Set accent color based on element
+            const orderSummary = document.getElementById('orderSummary');
+            orderSummary.style.borderColor = `${bundleData.elementColor}33`; // 20% opacity
+        }
+        
+        // Form submission
+        const form = document.getElementById('checkoutForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Show loading overlay
+            loadingOverlay.classList.add('active');
+            
+            // Simulate processing
+            setTimeout(() => {
+                // In a real implementation, this would process the order
+                console.log('Order processed:', {
+                    bundle: bundleData,
+                    name: document.getElementById('name').value,
+                    address: document.getElementById('address').value
+                });
+                
+                // Clear session storage
+                sessionStorage.clear();
+                
+                // Redirect to confirmation or home
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }, 3000);
+        });
+        
+        // Enhanced smoke parallax
+        let mouseX = 0;
+        let mouseY = 0;
+        let currentX = 0;
+        let currentY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+        
+        function animateSmoke() {
+            currentX += (mouseX - currentX) * 0.05;
+            currentY += (mouseY - currentY) * 0.05;
+            
+            const smokeLayers = document.querySelectorAll('.smoke-layer');
+            smokeLayers.forEach((layer, index) => {
+                const speed = (index + 1) * 10;
+                const x = currentX * speed;
+                const y = currentY * speed;
+                
+                layer.style.transform = `translate(${x}px, ${y}px)`;
+            });
+            
+            requestAnimationFrame(animateSmoke);
+        }
+        
+        animateSmoke();
+        
+        // Auto-format card inputs
+        const cardInputs = document.querySelectorAll('.payment-fields input');
+        cardInputs[0].addEventListener('input', function(e) {
+            // Format card number with spaces
+            let value = e.target.value.replace(/\s/g, '');
+            let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+            e.target.value = formattedValue;
+        });
+        
+        cardInputs[1].addEventListener('input', function(e) {
+            // Format MM/YY
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 2) {
+                value = value.slice(0,2) + '/' + value.slice(2,4);
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>
+
+
