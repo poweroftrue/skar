@@ -49,6 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         hideAllViews();
         
+        // Always scroll to top when navigating
+        window.scrollTo(0, 0);
+        
         // Show the appropriate view
         switch(route) {
             case 'cases':
@@ -71,17 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
             case 'mayassaStory':
                 if (mayassaStory) mayassaStory.classList.remove('hidden');
                 updateActiveMenu('perfume');
-                window.scrollTo(0, 0);
                 break;
             case 'desertWindStory':
                 if (desertWindStory) desertWindStory.classList.remove('hidden');
                 updateActiveMenu('perfume');
-                window.scrollTo(0, 0);
                 break;
             case 'sandDuneStory':
                 if (sandDuneStory) sandDuneStory.classList.remove('hidden');
                 updateActiveMenu('perfume');
-                window.scrollTo(0, 0);
                 break;
         }
         
