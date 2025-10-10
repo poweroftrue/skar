@@ -295,35 +295,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
     
-    // Handle breadcrumb back navigation
-    const breadcrumbLinks = document.querySelectorAll('.breadcrumb-link');
-    breadcrumbLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
+    // Handle logo click to navigate home
+    const logoLink = document.querySelector('.logo-link');
+    if (logoLink) {
+        logoLink.addEventListener('click', (e) => {
             e.preventDefault();
-            const backTo = link.getAttribute('data-back');
-            
-            if (backTo === 'perfume') {
-                switchView('perfume');
-                
-                // Update active menu states
-                desktopMenuItems.forEach(m => {
-                    if (m.getAttribute('data-category') === 'perfume') {
-                        m.classList.add('active');
-                    } else {
-                        m.classList.remove('active');
-                    }
-                });
-                
-                mobileMenuItems.forEach(m => {
-                    if (m.getAttribute('data-category') === 'perfume') {
-                        m.classList.add('active');
-                    } else {
-                        m.classList.remove('active');
-                    }
-                });
-            }
+            navigateTo('/');
         });
-    });
+    }
     
     // Handle story CTA button clicks (trigger checkout)
     const storyCTAButtons = document.querySelectorAll('.story-cta-button');
