@@ -118,6 +118,38 @@
         </section>
     </main>
 
+    <!-- Checkout Modal -->
+    <div class="checkout-overlay" id="checkoutOverlay">
+        <div class="checkout-modal" id="checkoutModal">
+            <button class="checkout-close" id="checkoutClose" aria-label="Close">×</button>
+            
+            <div class="checkout-content">
+                <div class="checkout-product">
+                    <div class="checkout-product-image">
+                        <img id="checkoutProductImage" src="" alt="">
+                    </div>
+                    <div class="checkout-product-info">
+                        <h2 class="checkout-product-name" id="checkoutProductName"></h2>
+                        <p class="checkout-product-price">
+                            <span class="price-amount" id="checkoutProductPrice"></span>
+                            <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="checkout-divider"></div>
+            </div>
+            
+            <div class="checkout-actions">
+                <button class="checkout-btn primary">
+                    <span>buy now with</span>
+                    <img src="apple-pay.svg" alt="Apple Pay" class="applepay-logo">
+                </button>
+                <button class="checkout-btn">add to cart</button>
+            </div>
+        </div>
+    </div>
+
     <script src="main.js"></script>
 </body>
 </html>
