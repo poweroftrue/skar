@@ -49,6 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         hideAllViews();
         
+        // Hide cart notification when navigating
+        hideCartNotification();
+        
         // Always scroll to top when navigating
         window.scrollTo(0, 0);
         
@@ -427,46 +430,111 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function showCartFeedback(message) {
-        // Create temporary feedback element
-        const feedback = document.createElement('div');
-        feedback.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: var(--color-black);
-            color: var(--color-white);
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            font-weight: var(--font-weight-medium);
-            letter-spacing: 0.02em;
-            z-index: 10000;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        `;
-        feedback.textContent = message;
-        document.body.appendChild(feedback);
+        // Use the cart notification toast
+        showCartNotification();
+    }
+    
+    function showCartNotification() {
+        const notification = document.getElementById('cartNotification');
+        const notificationText = document.getElementById('cartNotificationText');
         
-        // Animate in
-        setTimeout(() => {
-            feedback.style.opacity = '1';
-        }, 10);
+        if (!notification) return;
         
-        // Animate out and remove
-        setTimeout(() => {
-            feedback.style.opacity = '0';
-            setTimeout(() => {
-                document.body.removeChild(feedback);
-            }, 300);
-        }, 1500);
+        // Update text based on cart count
+        const itemCount = getCartItemCount();
+        if (itemCount === 1) {
+            notificationText.textContent = '1 item in cart';
+        } else {
+            notificationText.textContent = `${itemCount} items in cart`;
+        }
+        
+        // Show notification and keep it visible
+        notification.classList.add('show');
+        
+        // Clear any existing timeout
+        if (notification.hideTimeout) {
+            clearTimeout(notification.hideTimeout);
+            notification.hideTimeout = null;
+        }
+        
+        // Clear any existing listeners
+        if (notification.scrollListener) {
+            window.removeEventListener('scroll', notification.scrollListener);
+            window.removeEventListener('wheel', notification.scrollListener);
+            window.removeEventListener('touchmove', notification.scrollListener);
+            notification.scrollListener = null;
+        }
+        
+        // Setup scroll listener to hide on user scroll/movement
+        notification.scrollListener = () => {
+            hideCartNotification();
+        };
+        
+        // Add listeners
+        window.addEventListener('scroll', notification.scrollListener, { passive: true });
+        window.addEventListener('wheel', notification.scrollListener, { passive: true });
+        window.addEventListener('touchmove', notification.scrollListener, { passive: true });
+    }
+    
+    function hideCartNotification() {
+        const notification = document.getElementById('cartNotification');
+        if (!notification) return;
+        
+        // Clear any pending hide timeout
+        if (notification.hideTimeout) {
+            clearTimeout(notification.hideTimeout);
+            notification.hideTimeout = null;
+        }
+        
+        // Remove scroll listeners
+        if (notification.scrollListener) {
+            window.removeEventListener('scroll', notification.scrollListener);
+            window.removeEventListener('wheel', notification.scrollListener);
+            window.removeEventListener('touchmove', notification.scrollListener);
+            notification.scrollListener = null;
+        }
+        
+        notification.classList.remove('show');
     }
     
     // Initialize cart count and view on page load
     updateCartCount();
     updateCartView();
     
+    // Setup cart notification button
+    const viewCartBtn = document.getElementById('viewCartBtn');
+    if (viewCartBtn) {
+        viewCartBtn.addEventListener('click', () => {
+            hideCartNotification();
+            navigateTo('/cart');
+        });
+    }
+    
+    // Keep notification visible when hovering over it
+    const cartNotification = document.getElementById('cartNotification');
+    if (cartNotification) {
+        cartNotification.addEventListener('mouseenter', () => {
+            // Remove scroll listeners when hovering
+            if (cartNotification.scrollListener) {
+                window.removeEventListener('scroll', cartNotification.scrollListener);
+                window.removeEventListener('wheel', cartNotification.scrollListener);
+                window.removeEventListener('touchmove', cartNotification.scrollListener);
+                cartNotification.scrollListener = null;
+            }
+        });
+        
+        cartNotification.addEventListener('mouseleave', () => {
+            // Re-add scroll listeners when mouse leaves
+            if (cartNotification.classList.contains('show')) {
+                cartNotification.scrollListener = () => {
+                    hideCartNotification();
+                };
+                window.addEventListener('scroll', cartNotification.scrollListener, { passive: true });
+                window.addEventListener('wheel', cartNotification.scrollListener, { passive: true });
+                window.addEventListener('touchmove', cartNotification.scrollListener, { passive: true });
+            }
+        });
+    }
     
     // Expose cart functions globally for onclick handlers
     window.addToCart = addToCart;
