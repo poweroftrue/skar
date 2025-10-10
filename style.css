@@ -265,7 +265,25 @@ a {
     }
     
     .sidebar {
-        display: none;
+        position: static;
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        background-color: var(--color-white);
+    }
+    
+    .sidebar-nav {
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 12px 16px;
+        gap: 16px;
+    }
+    
+    .menu-item {
+        font-size: 0.75rem;
+        padding: 4px 8px;
     }
     
     .main-content {
