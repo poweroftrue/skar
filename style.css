@@ -633,6 +633,12 @@ a {
     .checkout-actions {
         padding: 0 24px 24px;
     }
+    
+    /* Fix for mobile overlay issues */
+    .checkout-overlay:not(.active) {
+        display: none !important;
+        pointer-events: none;
+    }
 }
 
 @media (max-width: 480px) {

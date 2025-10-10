@@ -232,6 +232,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const product = products[productKey];
         if (!product) return;
         
+        // Reset modal state to prevent issues from previous incomplete animations
+        checkoutOverlay.style.display = '';
+        checkoutModal.classList.remove('closing');
+        
         // Populate modal with product data
         document.getElementById('checkoutProductImage').src = product.image;
         document.getElementById('checkoutProductImage').alt = product.alt;
@@ -256,6 +260,12 @@ document.addEventListener('DOMContentLoaded', () => {
             checkoutOverlay.classList.remove('active');
             checkoutModal.classList.remove('closing');
             document.body.style.overflow = ''; // Restore scrolling
+            
+            // Force reset overlay display on mobile to prevent stuck black screen
+            checkoutOverlay.style.display = 'none';
+            setTimeout(() => {
+                checkoutOverlay.style.display = ''; // Reset to CSS default
+            }, 10);
         }, 300); // Match the animation duration
     }
     
