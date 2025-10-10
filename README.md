@@ -76,35 +76,7 @@ If you're actively developing and deploying:
 4. Make your changes and test
 5. Turn it **Off** when done
 
-### Option 4: Helper Script (Easiest for Frequent Updates)
-
-Use the included `purge-cache.sh` script:
-
-```bash
-# 1. Get your Cloudflare credentials:
-#    - Zone ID: Cloudflare Dashboard → Your Domain → Overview
-#    - API Token: https://dash.cloudflare.com/profile/api-tokens
-#      (Create with "Zone.Cache Purge" permission)
-
-# 2. Set credentials as environment variables (do this once):
-export CLOUDFLARE_ZONE_ID='your_zone_id_here'
-export CLOUDFLARE_API_TOKEN='your_api_token_here'
-
-# 3. Run the script after each deployment:
-./purge-cache.sh
-```
-
-The script will ask if you want to purge everything or just HTML/CSS/JS files.
-
-**Pro tip**: Add these exports to your `~/.zshrc` or `~/.bashrc` so you don't have to set them every time:
-
-```bash
-# Add to ~/.zshrc
-export CLOUDFLARE_ZONE_ID='your_zone_id_here'
-export CLOUDFLARE_API_TOKEN='your_api_token_here'
-```
-
-### Option 5: Manual API Call (Advanced)
+### Option 4: Manual API Call (Advanced)
 
 Purge cache directly using cURL:
 
@@ -147,8 +119,9 @@ git commit -m "Update site"
 git push
 
 # 4. Wait for Cloudflare to deploy (~30 seconds)
-# 5. Purge the cache
-./purge-cache.sh
+# 5. Purge the cache via Cloudflare Dashboard:
+#    - Go to Caching → Configuration → Purge Everything
+#    OR use Development Mode while actively developing
 
 # Done! Your changes are now live.
 ```
@@ -187,7 +160,6 @@ php -S localhost:8000
 ├── Saudi_Riyal_Symbol.svg  # Currency icon
 ├── images/             # Product images (cases + perfume pods)
 ├── _headers            # Cloudflare cache control headers
-├── purge-cache.sh      # Helper script to purge Cloudflare cache
 ├── robots.txt          # SEO robots file
 ├── favicon.svg         # Site favicon
 ├── PERFUME-IMAGES-NEEDED.md    # Guide for perfume pod images
