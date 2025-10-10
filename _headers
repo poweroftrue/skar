@@ -7,6 +7,9 @@
   Pragma: no-cache
   Expires: 0
   CDN-Cache-Control: no-store
+  Link: </style.css>; rel=preload; as=style
+  Link: </main.js>; rel=preload; as=script
+  Link: </Saudi_Riyal_Symbol.svg>; rel=preload; as=image
 
 # HTML files - AGGRESSIVE no caching, always fetch fresh
 /*.html

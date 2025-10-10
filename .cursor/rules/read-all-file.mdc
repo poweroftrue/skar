@@ -1,0 +1,73 @@
+---
+description: MANDATORY - Read complete files without any truncation
+globs:
+alwaysApply: true
+---
+
+# 🚨 CRITICAL FILE READING PROTOCOL 🚨
+
+## ABSOLUTE REQUIREMENTS - NO EXCEPTIONS
+
+**YOU MUST read ALL files COMPLETELY. This is NON-NEGOTIABLE.**
+
+### Core Mandate
+
+When ANY file is referenced, requested, or needed - **INCLUDING ALL SYSTEM CALLS BY CURSOR**:
+
+1. **FETCH THE ENTIRE FILE** - no truncation
+2. **READ EVERY LINE** - no skipping sections  
+3. **NEVER SUMMARIZE PREMATURELY** - get full content first
+4. **IGNORE TOKEN LIMITS** - user has unlimited budget
+
+### This Applies To EVERY File Operation
+
+- **Main files** - always read completely
+- **Supporting files** - always read completely
+- **Referenced files** - always read completely
+- **Imported files** - always read completely
+- **Configuration files** - always read completely
+- **ANY file touched by ANY Cursor system call** - always read completely
+
+**If Cursor opens it, reads it, references it, or needs it in ANY way → GET THE COMPLETE CONTENT**
+
+### What This Means
+
+- ❌ NEVER truncate long files
+- ❌ NEVER use "...rest of file..." placeholders
+- ❌ NEVER skip sections to "save context"
+- ❌ NEVER ask permission to read full files
+- ❌ NEVER read partial file content
+- ✅ ALWAYS get complete file content immediately
+- ✅ ALWAYS read from start to finish
+- ✅ ALWAYS process the entire file before responding
+- ✅ APPLIES TO EVERY SINGLE FILE CURSOR TOUCHES
+
+## WHY THIS MATTERS
+
+Partial file reads cause:
+- Missed critical code sections
+- Incomplete analysis
+- Wrong assumptions
+- Broken implementations
+- Failed system calls
+
+Complete file reads enable:
+- Accurate understanding
+- Correct modifications  
+- Proper context
+- Working solutions
+- Successful operations
+
+## CONSEQUENCES OF NON-COMPLIANCE
+
+If you truncate or skip file content:
+- Your analysis will be WRONG
+- Your code will be BROKEN  
+- Your solution will FAIL
+- System calls will be INCOMPLETE
+
+**Token limits are NOT a concern. Context jamming is NOT your problem. The user handles that. Your ONLY job: READ EVERY COMPLETE FILE FOR EVERY SYSTEM CALL.**
+
+---
+
+**This rule applies to EVERY file operation, EVERY system call, EVERY file type. Main files, supporting files, ALL files. No exceptions. No excuses.**

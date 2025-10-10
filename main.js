@@ -1,5 +1,5 @@
 // ========================================
-// SKAR — Supreme-style Navigation & Checkout
+// SKAR — Supreme-style Navigation & Checkout with URL Routing
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -12,25 +12,113 @@ document.addEventListener('DOMContentLoaded', () => {
     const perfumeView = document.getElementById('perfumeView');
     const archiveView = document.getElementById('archiveView');
     
-    // Function to switch views
-    function switchView(category) {
-        // Hide all views
+    // Get all story pages
+    const mayassaStory = document.getElementById('mayassaStory');
+    const desertWindStory = document.getElementById('desertWindStory');
+    const sandDuneStory = document.getElementById('sandDuneStory');
+    
+    // Route mapping
+    const routes = {
+        '/': 'cases',
+        '/cases': 'cases',
+        '/perfume': 'perfume',
+        '/perfume/mayassa': 'mayassaStory',
+        '/perfume/riyadh-night': 'mayassaStory',
+        '/perfume/desert-wind': 'desertWindStory',
+        '/perfume/sand-dune': 'sandDuneStory',
+        '/archive': 'archive'
+    };
+    
+    // Function to hide all views
+    function hideAllViews() {
         if (shopView) shopView.classList.add('hidden');
         if (perfumeView) perfumeView.classList.add('hidden');
         if (archiveView) archiveView.classList.add('hidden');
+        if (mayassaStory) mayassaStory.classList.add('hidden');
+        if (desertWindStory) desertWindStory.classList.add('hidden');
+        if (sandDuneStory) sandDuneStory.classList.add('hidden');
+    }
+    
+    // Function to navigate to a route
+    function navigateTo(path, pushState = true) {
+        const route = routes[path] || 'cases';
         
-        // Show the selected view
-        switch(category) {
+        hideAllViews();
+        
+        // Show the appropriate view
+        switch(route) {
             case 'cases':
                 if (shopView) shopView.classList.remove('hidden');
+                updateActiveMenu('cases');
                 break;
             case 'perfume':
                 if (perfumeView) perfumeView.classList.remove('hidden');
+                updateActiveMenu('perfume');
                 break;
             case 'archive':
                 if (archiveView) archiveView.classList.remove('hidden');
+                updateActiveMenu('archive');
+                break;
+            case 'mayassaStory':
+                if (mayassaStory) mayassaStory.classList.remove('hidden');
+                updateActiveMenu('perfume');
+                window.scrollTo(0, 0);
+                break;
+            case 'desertWindStory':
+                if (desertWindStory) desertWindStory.classList.remove('hidden');
+                updateActiveMenu('perfume');
+                window.scrollTo(0, 0);
+                break;
+            case 'sandDuneStory':
+                if (sandDuneStory) sandDuneStory.classList.remove('hidden');
+                updateActiveMenu('perfume');
+                window.scrollTo(0, 0);
                 break;
         }
+        
+        // Update browser history
+        if (pushState) {
+            history.pushState({ path }, '', path);
+        }
+    }
+    
+    // Function to update active menu state
+    function updateActiveMenu(category) {
+        desktopMenuItems.forEach(m => {
+            if (m.getAttribute('data-category') === category) {
+                m.classList.add('active');
+            } else {
+                m.classList.remove('active');
+            }
+        });
+        
+        mobileMenuItems.forEach(m => {
+            if (m.getAttribute('data-category') === category) {
+                m.classList.add('active');
+            } else {
+                m.classList.remove('active');
+            }
+        });
+    }
+    
+    // Function to switch views (legacy support)
+    function switchView(category) {
+        const pathMap = {
+            'cases': '/cases',
+            'perfume': '/perfume',
+            'archive': '/archive'
+        };
+        navigateTo(pathMap[category] || '/cases');
+    }
+    
+    // Function to show individual story page (legacy support)
+    function showStoryPage(storyId) {
+        const storyPathMap = {
+            'mayassaStory': '/perfume/mayassa',
+            'desertWindStory': '/perfume/desert-wind',
+            'sandDuneStory': '/perfume/sand-dune'
+        };
+        navigateTo(storyPathMap[storyId]);
     }
     
     // Handle desktop menu clicks
@@ -182,15 +270,74 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.cursor = 'pointer';
     });
     
-    // Add click handlers to perfume story cards
+    // Add click handlers to perfume story cards (navigate to story page)
     perfumeStoryCards.forEach(card => {
         card.addEventListener('click', () => {
-            const productKey = card.getAttribute('data-perfume');
-            openCheckout(productKey);
+            const perfumeKey = card.getAttribute('data-perfume');
+            
+            // Map perfume keys to story page IDs
+            const storyMap = {
+                'riyadh-night': 'mayassaStory',
+                'desert-wind': 'desertWindStory',
+                'sand-dune': 'sandDuneStory'
+            };
+            
+            const storyId = storyMap[perfumeKey];
+            if (storyId) {
+                showStoryPage(storyId);
+            }
         });
         
         // Add cursor pointer style
         card.style.cursor = 'pointer';
+    });
+    
+    // Handle breadcrumb back navigation
+    const breadcrumbLinks = document.querySelectorAll('.breadcrumb-link');
+    breadcrumbLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const backTo = link.getAttribute('data-back');
+            
+            if (backTo === 'perfume') {
+                switchView('perfume');
+                
+                // Update active menu states
+                desktopMenuItems.forEach(m => {
+                    if (m.getAttribute('data-category') === 'perfume') {
+                        m.classList.add('active');
+                    } else {
+                        m.classList.remove('active');
+                    }
+                });
+                
+                mobileMenuItems.forEach(m => {
+                    if (m.getAttribute('data-category') === 'perfume') {
+                        m.classList.add('active');
+                    } else {
+                        m.classList.remove('active');
+                    }
+                });
+            }
+        });
+    });
+    
+    // Handle story CTA button clicks (trigger checkout)
+    const storyCTAButtons = document.querySelectorAll('.story-cta-button');
+    storyCTAButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const perfumeKey = button.getAttribute('data-perfume');
+            openCheckout(perfumeKey);
+        });
+    });
+    
+    // Handle quick buy button clicks (trigger checkout)
+    const quickBuyButtons = document.querySelectorAll('.quick-buy-button');
+    quickBuyButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const perfumeKey = button.getAttribute('data-perfume');
+            openCheckout(perfumeKey);
+        });
     });
     
     // Close modal on close button click
@@ -214,4 +361,14 @@ document.addEventListener('DOMContentLoaded', () => {
     checkoutModal.addEventListener('click', (e) => {
         e.stopPropagation();
     });
+    
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', (e) => {
+        const path = e.state?.path || window.location.pathname;
+        navigateTo(path, false);
+    });
+    
+    // Handle initial page load
+    const initialPath = window.location.pathname;
+    navigateTo(initialPath, false);
 });

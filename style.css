@@ -925,3 +925,457 @@ a {
         font-size: 0.875rem;
     }
 }
+
+/* ========================================
+   Individual Perfume Story Pages
+   ======================================== */
+
+/* Main Story Page Container */
+.perfume-story-page {
+    display: block;
+    padding: 80px 32px 120px;
+    min-height: calc(100vh - 80px);
+    position: relative;
+}
+
+.perfume-story-page.hidden {
+    display: none;
+}
+
+/* Breadcrumb Navigation */
+.story-breadcrumb {
+    position: relative;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    color: var(--color-gray-medium);
+}
+
+.breadcrumb-link {
+    color: var(--color-gray-medium);
+    transition: opacity var(--transition);
+}
+
+.breadcrumb-link:hover {
+    opacity: 0.6;
+}
+
+.breadcrumb-divider {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.breadcrumb-current {
+    color: var(--color-black);
+}
+
+/* Story Media (Images & Videos) */
+.story-media {
+    width: 100%;
+    margin: 48px 0;
+}
+
+.story-media-small {
+    max-width: 500px;
+    margin: 32px auto;
+}
+
+.story-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    filter: grayscale(20%) contrast(1.05);
+    transition: filter 0.4s ease;
+}
+
+.story-image:hover {
+    filter: grayscale(0%) contrast(1.1);
+}
+
+.story-caption {
+    font-size: 0.8125rem;
+    color: var(--color-gray-medium);
+    font-style: italic;
+    text-align: center;
+    margin-top: 12px;
+    letter-spacing: 0.02em;
+}
+
+/* Video Container (16:9 responsive) */
+.story-video {
+    margin: 64px 0;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Story Content Container */
+.story-content {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+/* Story Section */
+.story-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Character Name (Main Title) */
+.story-character-name {
+    font-size: 3rem;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+    color: var(--color-black);
+    line-height: 1.1;
+    margin-bottom: 8px;
+}
+
+/* Perfume Name (Subtitle) */
+.story-perfume-name {
+    font-size: 0.875rem;
+    color: var(--color-gray-medium);
+    letter-spacing: 0.1em;
+    text-transform: lowercase;
+}
+
+/* Story Heading (Section Titles) */
+.story-heading {
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+    color: var(--color-black);
+    margin-bottom: 12px;
+}
+
+/* Story Subheading */
+.story-subheading {
+    font-size: 1.125rem;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+    color: var(--color-black);
+    margin-bottom: 16px;
+}
+
+/* Story Paragraph */
+.story-paragraph {
+    font-size: 1.0625rem;
+    line-height: 1.9;
+    color: var(--color-gray-medium);
+    letter-spacing: 0.01em;
+}
+
+.story-paragraph strong {
+    color: var(--color-black);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Story Dividers (Using Simple Symbols) */
+.story-divider {
+    text-align: center;
+    font-size: 1.125rem;
+    letter-spacing: 0.3em;
+    color: rgba(255, 255, 255, 0.2);
+    margin: 32px 0;
+    user-select: none;
+}
+
+/* Technical Section */
+.story-technical {
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 32px;
+}
+
+.story-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.story-list li {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-gray-medium);
+}
+
+.story-list li strong {
+    color: var(--color-black);
+    font-weight: var(--font-weight-medium);
+}
+
+.story-meta {
+    font-size: 0.875rem;
+    color: var(--color-gray-medium);
+    letter-spacing: 0.02em;
+    margin: 8px 0;
+}
+
+/* Inline CTA Section (Natural Flow) */
+.story-inline-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    margin: 64px 0;
+    padding: 64px 32px;
+    background-color: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.story-cta-intro {
+    text-align: center;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--color-black);
+    max-width: 500px;
+}
+
+.story-cta-button {
+    background-color: var(--color-black);
+    color: var(--color-white);
+    border: 2px solid var(--color-black);
+    padding: 18px 56px;
+    font-size: 0.9375rem;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.story-cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+}
+
+.story-cta-button:active {
+    transform: translateY(0);
+}
+
+/* Quick Buy Bar (Sticky and always visible) */
+.quick-buy-bar {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 800;
+}
+
+.quick-buy-button {
+    background-color: var(--color-black);
+    color: var(--color-white);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 12px 40px;
+    font-size: 0.875rem;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quick-buy-button:hover {
+    border-color: var(--color-black);
+    background-color: var(--color-white);
+    color: var(--color-black);
+}
+
+/* Responsive Design for Story Pages */
+@media (max-width: 768px) {
+    .perfume-story-page {
+        padding: 64px 24px 80px;
+    }
+    
+    .story-breadcrumb {
+        margin-bottom: 40px;
+        font-size: 0.6875rem;
+    }
+    
+    .story-content {
+        gap: 40px;
+    }
+    
+    .story-character-name {
+        font-size: 2rem;
+    }
+    
+    .story-perfume-name {
+        font-size: 0.8125rem;
+    }
+    
+    .story-heading {
+        font-size: 1.25rem;
+    }
+    
+    .story-subheading {
+        font-size: 1rem;
+    }
+    
+    .story-paragraph {
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+    
+    .story-media {
+        margin: 40px 0;
+    }
+    
+    .story-media-small {
+        max-width: 100%;
+        margin: 32px 0;
+    }
+    
+    .story-video {
+        margin: 48px 0;
+    }
+    
+    .story-caption {
+        font-size: 0.75rem;
+    }
+    
+    .story-technical {
+        padding: 24px;
+    }
+    
+    .story-inline-cta {
+        padding: 48px 24px;
+        margin: 48px 0;
+        gap: 24px;
+    }
+    
+    .story-cta-intro {
+        font-size: 1rem;
+    }
+    
+    .story-cta-button {
+        padding: 16px 40px;
+        font-size: 0.875rem;
+    }
+    
+    .quick-buy-bar {
+        padding: 14px 24px;
+    }
+    
+    .quick-buy-button {
+        padding: 11px 32px;
+        font-size: 0.8125rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .perfume-story-page {
+        padding: 48px 20px 60px;
+    }
+    
+    .story-breadcrumb {
+        margin-bottom: 32px;
+        font-size: 0.625rem;
+    }
+    
+    .story-content {
+        gap: 32px;
+    }
+    
+    .story-character-name {
+        font-size: 1.75rem;
+    }
+    
+    .story-heading {
+        font-size: 1.125rem;
+    }
+    
+    .story-paragraph {
+        font-size: 0.9375rem;
+        line-height: 1.75;
+    }
+    
+    .story-divider {
+        font-size: 1rem;
+    }
+    
+    .story-media {
+        margin: 32px 0;
+    }
+    
+    .story-media-small {
+        margin: 24px 0;
+    }
+    
+    .story-video {
+        margin: 40px 0;
+    }
+    
+    .story-caption {
+        font-size: 0.6875rem;
+        margin-top: 8px;
+    }
+    
+    .story-technical {
+        padding: 20px;
+    }
+    
+    .story-list li {
+        font-size: 0.875rem;
+    }
+    
+    .story-meta {
+        font-size: 0.8125rem;
+    }
+    
+    .story-inline-cta {
+        padding: 40px 20px;
+        margin: 40px 0;
+        gap: 20px;
+    }
+    
+    .story-cta-intro {
+        font-size: 0.9375rem;
+    }
+    
+    .story-cta-button {
+        padding: 14px 32px;
+        font-size: 0.8125rem;
+    }
+    
+    .quick-buy-bar {
+        padding: 12px 20px;
+    }
+    
+    .quick-buy-button {
+        padding: 10px 28px;
+        font-size: 0.75rem;
+    }
+}

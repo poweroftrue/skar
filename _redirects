@@ -1,0 +1,11 @@
+# Cloudflare Pages SPA routing
+# All routes should serve index.html for client-side routing
+
+/cases /index.html 200
+/perfume /index.html 200
+/perfume/* /index.html 200
+/archive /index.html 200
+
+# Fallback - catch all other routes
+/* /index.html 200
+
