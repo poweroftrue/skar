@@ -25,6 +25,22 @@ A minimalist, Supreme-inspired e-commerce site for premium cases.
 
 Your site will be live at `https://your-project.pages.dev`
 
+### Automatic Cache Purging Setup
+
+To enable automatic cache purging on every deployment:
+
+1. Get your Cloudflare credentials:
+   - **Zone ID**: Found in your domain's Overview page on Cloudflare dashboard
+   - **API Token**: Create one at [API Tokens](https://dash.cloudflare.com/profile/api-tokens) with "Zone.Cache Purge" permission
+
+2. Add GitHub Secrets (for GitHub repositories):
+   - Go to your GitHub repository → Settings → Secrets and variables → Actions
+   - Add two secrets:
+     - `CLOUDFLARE_ZONE_ID`: Your Cloudflare Zone ID
+     - `CLOUDFLARE_API_TOKEN`: Your Cloudflare API Token
+
+3. The GitHub Action will automatically purge the cache after each deployment to the main branch
+
 ### Option 2: Direct Upload
 
 1. Go to [Cloudflare Pages](https://pages.cloudflare.com/)
