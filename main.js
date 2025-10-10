@@ -7,6 +7,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuItems = document.querySelectorAll('.mobile-menu-item');
     const categoryTitle = document.getElementById('categoryTitle');
     
+    // Get all views
+    const shopView = document.getElementById('shopView');
+    const perfumeView = document.getElementById('perfumeView');
+    const archiveView = document.getElementById('archiveView');
+    
+    // Function to switch views
+    function switchView(category) {
+        // Hide all views
+        if (shopView) shopView.classList.add('hidden');
+        if (perfumeView) perfumeView.classList.add('hidden');
+        if (archiveView) archiveView.classList.add('hidden');
+        
+        // Show the selected view
+        switch(category) {
+            case 'cases':
+                if (shopView) shopView.classList.remove('hidden');
+                break;
+            case 'perfume':
+                if (perfumeView) perfumeView.classList.remove('hidden');
+                break;
+            case 'archive':
+                if (archiveView) archiveView.classList.remove('hidden');
+                break;
+        }
+    }
+    
     // Handle desktop menu clicks
     desktopMenuItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -31,6 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (categoryTitle) {
                 categoryTitle.textContent = category;
             }
+            
+            // Switch view
+            switchView(category);
         });
     });
     
@@ -58,6 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (categoryTitle) {
                 categoryTitle.textContent = category;
             }
+            
+            // Switch view
+            switchView(category);
         });
     });
     
@@ -72,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Product data
     const products = {
+        // Cases
         'off-white': {
             name: 'Off White',
             price: '149',
@@ -83,6 +116,25 @@ document.addEventListener('DOMContentLoaded', () => {
             price: '199',
             image: 'images/metalic-titanium.png',
             alt: 'Metallic Titanium Case'
+        },
+        // Perfumes
+        'desert-wind': {
+            name: 'Desert Wind',
+            price: '89',
+            image: 'images/perfume-desert-wind.svg',
+            alt: 'Desert Wind Perfume Pod'
+        },
+        'riyadh-night': {
+            name: 'Riyadh Night',
+            price: '89',
+            image: 'images/perfume-riyadh-night.svg',
+            alt: 'Riyadh Night Perfume Pod'
+        },
+        'sand-dune': {
+            name: 'Sand Dune',
+            price: '89',
+            image: 'images/perfume-sand-dune.svg',
+            alt: 'Sand Dune Perfume Pod'
         }
     };
     
@@ -113,10 +165,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300); // Match the animation duration
     }
     
-    // Add click handlers to available product cards
+    // Add click handlers to available product cards (both cases and perfumes)
     productCards.forEach(card => {
         card.addEventListener('click', () => {
-            const productKey = card.getAttribute('data-color');
+            // Try getting data-color (for cases) or data-perfume (for perfumes)
+            const productKey = card.getAttribute('data-color') || card.getAttribute('data-perfume');
             openCheckout(productKey);
         });
         

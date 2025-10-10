@@ -133,6 +133,10 @@ a {
     padding: 32px;
 }
 
+.shop-view.hidden {
+    display: none;
+}
+
 .shop-header {
     display: flex;
     justify-content: space-between;
@@ -242,6 +246,13 @@ a {
 .product-color {
     font-size: 0.8125rem;
     color: var(--color-gray-medium);
+}
+
+.product-description {
+    font-size: 0.75rem;
+    color: var(--color-gray-medium);
+    letter-spacing: 0.02em;
+    font-style: italic;
 }
 
 .product-price {
@@ -632,5 +643,79 @@ a {
     .checkout-btn {
         padding: 14px 20px;
         font-size: 0.8125rem;
+    }
+}
+
+/* ========================================
+   Archive View (Story Section)
+   ======================================== */
+.archive-view {
+    display: block;
+    padding: 64px 32px;
+    min-height: calc(100vh - 80px);
+}
+
+.archive-view.hidden {
+    display: none;
+}
+
+.archive-content {
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.archive-story {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.archive-title {
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-medium);
+    letter-spacing: 0.05em;
+    text-transform: lowercase;
+    color: var(--color-black);
+}
+
+.archive-text {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.archive-text p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--color-gray-medium);
+    letter-spacing: 0.02em;
+}
+
+@media (max-width: 768px) {
+    .archive-view {
+        padding: 48px 24px;
+    }
+    
+    .archive-title {
+        font-size: 1.25rem;
+    }
+    
+    .archive-text p {
+        font-size: 0.9375rem;
+        line-height: 1.7;
+    }
+}
+
+@media (max-width: 480px) {
+    .archive-view {
+        padding: 32px 20px;
+    }
+    
+    .archive-title {
+        font-size: 1.125rem;
+    }
+    
+    .archive-text p {
+        font-size: 0.875rem;
     }
 }

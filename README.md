@@ -25,22 +25,6 @@ A minimalist, Supreme-inspired e-commerce site for premium cases.
 
 Your site will be live at `https://your-project.pages.dev`
 
-### Automatic Cache Purging Setup
-
-To enable automatic cache purging on every deployment:
-
-1. Get your Cloudflare credentials:
-   - **Zone ID**: Found in your domain's Overview page on Cloudflare dashboard
-   - **API Token**: Create one at [API Tokens](https://dash.cloudflare.com/profile/api-tokens) with "Zone.Cache Purge" permission
-
-2. Add GitHub Secrets (for GitHub repositories):
-   - Go to your GitHub repository → Settings → Secrets and variables → Actions
-   - Add two secrets:
-     - `CLOUDFLARE_ZONE_ID`: Your Cloudflare Zone ID
-     - `CLOUDFLARE_API_TOKEN`: Your Cloudflare API Token
-
-3. The GitHub Action will automatically purge the cache after each deployment to the main branch
-
 ### Option 2: Direct Upload
 
 1. Go to [Cloudflare Pages](https://pages.cloudflare.com/)
@@ -48,6 +32,126 @@ To enable automatic cache purging on every deployment:
 3. Select "Direct Upload"
 4. Upload all files in this directory (or create a zip file)
 5. Your site will be deployed instantly
+
+## Cache Management
+
+### Why Cache Issues Happen
+
+Cloudflare caches your site for performance, but this means changes won't appear immediately. The `_headers` file in this project has aggressive no-cache rules, but you still need to purge Cloudflare's cache after deployment.
+
+### Option 1: Manual Cache Purging (Quick & Easy)
+
+After each deployment:
+
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
+2. Select your domain
+3. Go to **Caching** → **Configuration**
+4. Click **Purge Everything** button
+5. Confirm the purge
+
+⚠️ **Note**: Purging everything will temporarily slow your site as the cache rebuilds. This is normal.
+
+### Option 2: Selective Cache Purging (Better)
+
+If you only want to clear specific files:
+
+1. Go to **Caching** → **Configuration**
+2. Click **Custom Purge**
+3. Enter the URLs you want to purge:
+   ```
+   https://yourdomain.com/
+   https://yourdomain.com/index.html
+   https://yourdomain.com/style.css
+   https://yourdomain.com/main.js
+   ```
+4. Click **Purge**
+
+### Option 3: Development Mode (While Making Changes)
+
+If you're actively developing and deploying:
+
+1. Go to **Caching** → **Configuration**
+2. Toggle **Development Mode** to **On**
+3. This bypasses cache for 3 hours
+4. Make your changes and test
+5. Turn it **Off** when done
+
+### Option 4: Helper Script (Easiest for Frequent Updates)
+
+Use the included `purge-cache.sh` script:
+
+```bash
+# 1. Get your Cloudflare credentials:
+#    - Zone ID: Cloudflare Dashboard → Your Domain → Overview
+#    - API Token: https://dash.cloudflare.com/profile/api-tokens
+#      (Create with "Zone.Cache Purge" permission)
+
+# 2. Set credentials as environment variables (do this once):
+export CLOUDFLARE_ZONE_ID='your_zone_id_here'
+export CLOUDFLARE_API_TOKEN='your_api_token_here'
+
+# 3. Run the script after each deployment:
+./purge-cache.sh
+```
+
+The script will ask if you want to purge everything or just HTML/CSS/JS files.
+
+**Pro tip**: Add these exports to your `~/.zshrc` or `~/.bashrc` so you don't have to set them every time:
+
+```bash
+# Add to ~/.zshrc
+export CLOUDFLARE_ZONE_ID='your_zone_id_here'
+export CLOUDFLARE_API_TOKEN='your_api_token_here'
+```
+
+### Option 5: Manual API Call (Advanced)
+
+Purge cache directly using cURL:
+
+```bash
+# Purge everything
+curl -X POST "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/purge_cache" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"purge_everything":true}'
+
+# Purge specific files
+curl -X POST "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/purge_cache" \
+  -H "Authorization: Bearer YOUR_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"files":["https://yourdomain.com/","https://yourdomain.com/style.css","https://yourdomain.com/main.js"]}'
+```
+
+### Cache-Busting with Version Numbers
+
+This project uses version query strings (e.g., `style.css?v=20251010`) to force browsers to fetch new files. 
+
+**When you make changes to CSS or JS:**
+1. Update the version number in `index.html`
+2. Change `?v=20251010` to `?v=YYYYMMDD` (today's date)
+3. Deploy
+4. Purge cache
+
+This ensures all users get the latest files.
+
+### Quick Deployment Workflow
+
+Here's the recommended workflow after making changes:
+
+```bash
+# 1. Update version numbers in index.html if you changed CSS/JS
+# 2. Test locally
+# 3. Commit and push (if using Git integration)
+git add .
+git commit -m "Update site"
+git push
+
+# 4. Wait for Cloudflare to deploy (~30 seconds)
+# 5. Purge the cache
+./purge-cache.sh
+
+# Done! Your changes are now live.
+```
 
 ## Custom Domain
 
@@ -77,15 +181,27 @@ php -S localhost:8000
 
 ```
 /
-├── index.html          # Main page (cases catalog)
-├── shop.html           # Shop page (perfumes)
+├── index.html          # Main page (cases + perfumes + archive)
 ├── style.css           # All styles
-├── main.js             # Navigation logic
+├── main.js             # Navigation & checkout logic
 ├── Saudi_Riyal_Symbol.svg  # Currency icon
-├── images/             # Product images
-├── _headers            # Cloudflare Pages headers config
+├── images/             # Product images (cases + perfume pods)
+├── _headers            # Cloudflare cache control headers
+├── purge-cache.sh      # Helper script to purge Cloudflare cache
+├── robots.txt          # SEO robots file
+├── favicon.svg         # Site favicon
+├── PERFUME-IMAGES-NEEDED.md    # Guide for perfume pod images
+├── PERFUME-PAGE-SUMMARY.md     # Implementation details
 └── README.md           # This file
 ```
+
+## Site Sections
+
+The site now has three main sections accessible via navigation:
+
+1. **cases** - Premium phone cases (Off White, Metallic Titanium, etc.)
+2. **perfume** - Solid perfume pods inspired by Nord Fragrances
+3. **archive** - Brand story and philosophy
 
 ## Browser Support
 

@@ -19,7 +19,7 @@
     
     <title>SKAR</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20251010">
 </head>
 <body>
     <!-- Top Header with Logo -->
@@ -31,20 +31,18 @@
     <!-- Sidebar Menu (Desktop) -->
     <aside class="sidebar">
         <nav class="sidebar-nav">
-            <a href="#" class="menu-item" data-category="new">new</a>
             <a href="#" class="menu-item active" data-category="cases">cases</a>
-            <a href="#" class="menu-item" data-category="refills">refills</a>
-            <a href="#" class="menu-item" data-category="all">all</a>
+            <a href="#" class="menu-item" data-category="perfume">perfume</a>
+            <a href="#" class="menu-item" data-category="archive">archive</a>
         </nav>
     </aside>
 
     <!-- Mobile Navigation -->
     <nav class="mobile-nav">
         <div class="mobile-nav-container">
-            <a href="#" class="mobile-menu-item" data-category="new">new</a>
             <a href="#" class="mobile-menu-item active" data-category="cases">cases</a>
-            <a href="#" class="mobile-menu-item" data-category="refills">refills</a>
-            <a href="#" class="mobile-menu-item" data-category="all">all</a>
+            <a href="#" class="mobile-menu-item" data-category="perfume">perfume</a>
+            <a href="#" class="mobile-menu-item" data-category="archive">archive</a>
         </div>
     </nav>
 
@@ -118,6 +116,92 @@
                 </article>
             </div>
         </section>
+
+        <!-- Perfume View -->
+        <section class="shop-view hidden" id="perfumeView">
+            <div class="product-grid" id="perfumeGrid">
+                <!-- Desert Wind -->
+                <article class="product-card" data-perfume="desert-wind">
+                    <div class="product-image-container">
+                        <img src="images/perfume-desert-wind.svg" alt="Desert Wind Perfume Pod">
+                        <span class="stock-indicator">8 left</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Desert Wind</h3>
+                        <p class="product-description">warm amber / leather</p>
+                        <p class="product-price">
+                            <span class="price-amount">89</span>
+                            <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Riyadh Night -->
+                <article class="product-card" data-perfume="riyadh-night">
+                    <div class="product-image-container">
+                        <img src="images/perfume-riyadh-night.svg" alt="Riyadh Night Perfume Pod">
+                        <span class="stock-indicator">5 left</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Riyadh Night</h3>
+                        <p class="product-description">oud / rose / spice</p>
+                        <p class="product-price">
+                            <span class="price-amount">89</span>
+                            <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Sand Dune -->
+                <article class="product-card" data-perfume="sand-dune">
+                    <div class="product-image-container">
+                        <img src="images/perfume-sand-dune.svg" alt="Sand Dune Perfume Pod">
+                        <span class="stock-indicator">12 left</span>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Sand Dune</h3>
+                        <p class="product-description">sandalwood / vanilla</p>
+                        <p class="product-price">
+                            <span class="price-amount">89</span>
+                            <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
+                        </p>
+                    </div>
+                </article>
+
+                <!-- Royal Oud (Locked) -->
+                <article class="product-card locked-product" data-perfume="royal-oud">
+                    <div class="product-image-container">
+                        <img src="images/perfume-royal-oud.svg" alt="Royal Oud Perfume Pod">
+                        <div class="lock-overlay">
+                            <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="5" y="11" width="14" height="10" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">Royal Oud</h3>
+                        <p class="product-status">Invite Only</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Archive View (Story) -->
+        <section class="archive-view hidden" id="archiveView">
+            <div class="archive-content">
+                <div class="archive-story">
+                    <h2 class="archive-title">our story</h2>
+                    <div class="archive-text">
+                        <p>born in riyadh, crafted with precision.</p>
+                        <p>we believe in simplicity. in quality over quantity. in objects that last.</p>
+                        <p>each piece is designed to be essential. minimal. timeless.</p>
+                        <p>no excess. no compromise.</p>
+                        <p>just supreme quality, delivered.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <!-- Checkout Modal -->
@@ -152,7 +236,7 @@
         </div>
     </div>
 
-    <script src="main.js"></script>
+    <script src="main.js?v=20251010"></script>
 </body>
 </html>
 
