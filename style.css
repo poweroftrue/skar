@@ -1228,16 +1228,31 @@ a {
 
 .remove-item-btn {
     background-color: transparent;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: var(--color-gray-medium);
-    font-size: 0.75rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: color var(--transition);
-    text-decoration: underline;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    opacity: 0.6;
 }
 
 .remove-item-btn:hover {
     color: var(--color-black);
+    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.05);
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+.remove-item-btn:active {
+    transform: translateY(0);
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Empty Cart State */
@@ -1439,9 +1454,10 @@ a {
     }
     
     .cart-item-controls {
-        flex-direction: column;
-        gap: 8px;
-        align-items: flex-end;
+        flex-direction: row;
+        gap: 12px;
+        align-items: center;
+        justify-content: flex-end;
     }
     
     .quantity-controls {
@@ -1449,8 +1465,8 @@ a {
     }
     
     .quantity-btn {
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         font-size: 0.75rem;
     }
     
@@ -1459,9 +1475,14 @@ a {
         min-width: 20px;
     }
     
-    .remove-btn {
-        font-size: 0.75rem;
-        padding: 4px 8px;
+    .remove-item-btn {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .remove-item-btn svg {
+        width: 14px;
+        height: 14px;
     }
     
     .cart-total {
@@ -1521,9 +1542,10 @@ a {
     }
     
     .cart-item-controls {
-        flex-direction: column;
-        gap: 6px;
-        align-items: flex-end;
+        flex-direction: row;
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-end;
     }
     
     .quantity-controls {
@@ -1531,8 +1553,8 @@ a {
     }
     
     .quantity-btn {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
         font-size: 0.6875rem;
     }
     
@@ -1541,9 +1563,14 @@ a {
         min-width: 16px;
     }
     
-    .remove-btn {
-        font-size: 0.6875rem;
-        padding: 3px 6px;
+    .remove-item-btn {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .remove-item-btn svg {
+        width: 12px;
+        height: 12px;
     }
     
     .cart-btn {
