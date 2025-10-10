@@ -44,6 +44,10 @@
             <a href="#" class="menu-item active" data-category="cases">cases</a>
             <a href="#" class="menu-item" data-category="perfume">perfume</a>
             <a href="#" class="menu-item" data-category="archive">archive</a>
+            <a href="#" class="menu-item cart-menu-item" data-category="cart">
+                cart
+                <span class="cart-count" id="desktopCartCount">0</span>
+            </a>
         </nav>
     </aside>
 
@@ -53,6 +57,10 @@
             <a href="#" class="mobile-menu-item active" data-category="cases">cases</a>
             <a href="#" class="mobile-menu-item" data-category="perfume">perfume</a>
             <a href="#" class="mobile-menu-item" data-category="archive">archive</a>
+            <a href="#" class="mobile-menu-item cart-menu-item" data-category="cart">
+                cart
+                <span class="cart-count" id="mobileCartCount">0</span>
+            </a>
         </div>
     </nav>
 
@@ -246,6 +254,37 @@
                         <p>no excess. no compromise.</p>
                         <p>just supreme quality, delivered.</p>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cart View -->
+        <section class="cart-view hidden" id="cartView">
+            <div class="cart-content">
+                <div class="cart-header">
+                    <h2 class="cart-title">cart</h2>
+                    <p class="cart-subtitle" id="cartSubtitle">your selection</p>
+                </div>
+                
+                <div class="cart-items" id="cartItems">
+                    <!-- Cart items will be populated by JavaScript -->
+                </div>
+                
+                <div class="cart-summary" id="cartSummary">
+                    <div class="cart-total">
+                        <span class="total-label">total</span>
+                        <span class="total-amount">
+                            <span id="cartTotalAmount">0</span>
+                            <img src="/Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="cart-actions" id="cartActions">
+                    <button class="cart-btn primary" id="checkoutBtn">
+                        <span>checkout with</span>
+                        <img src="/apple-pay.svg" alt="Apple Pay" class="applepay-logo">
+                    </button>
                 </div>
             </div>
         </section>
