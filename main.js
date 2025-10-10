@@ -270,26 +270,29 @@ document.addEventListener('DOMContentLoaded', () => {
         card.style.cursor = 'pointer';
     });
     
-    // Add click handlers to perfume story cards (navigate to story page)
-    perfumeStoryCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const perfumeKey = card.getAttribute('data-perfume');
+    // Handle perfume story buttons
+    const perfumeButtons = document.querySelectorAll('.perfume-btn');
+    perfumeButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent card click
             
-            // Map perfume keys to story page IDs
-            const storyMap = {
-                'riyadh-night': 'mayassaStory',
-                'desert-wind': 'desertWindStory',
-                'sand-dune': 'sandDuneStory'
-            };
+            // Check if it's a story button or cart button
+            const storyKey = button.getAttribute('data-story');
+            const perfumeKey = button.getAttribute('data-perfume');
             
-            const storyId = storyMap[perfumeKey];
-            if (storyId) {
-                showStoryPage(storyId);
+            if (storyKey) {
+                // Navigate to story page
+                const storyMap = {
+                    'mayassa': '/perfume/mayassa',
+                    'desert-wind': '/perfume/desert-wind',
+                    'sand-dune': '/perfume/sand-dune'
+                };
+                navigateTo(storyMap[storyKey]);
+            } else if (perfumeKey) {
+                // Open checkout for add to cart
+                openCheckout(perfumeKey);
             }
         });
-        
-        // Add cursor pointer style
-        card.style.cursor = 'pointer';
     });
     
     // Handle breadcrumb back navigation
