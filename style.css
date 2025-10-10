@@ -326,10 +326,13 @@ a {
 }
 
 .product-status {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     color: var(--color-gray-medium);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    font-weight: var(--font-weight-medium);
+    margin-top: 4px;
+    opacity: 0.7;
 }
 
 /* ========================================
