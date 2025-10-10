@@ -231,7 +231,7 @@ a {
 
 .product-price {
     font-size: 0.8125rem;
-    color: var(--color-black);
+    color: var(--color-gray-medium);
     font-weight: var(--font-weight-medium);
     display: flex;
     align-items: center;
@@ -242,7 +242,7 @@ a {
     width: 14px;
     height: 16px;
     filter: invert(1);
-    opacity: 0.9;
+    opacity: 0.6;
 }
 
 .price-amount {

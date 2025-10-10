@@ -1,19 +1,15 @@
-# OS files
+# OS
 .DS_Store
 Thumbs.db
 
-# Editor directories and files
-.idea
-.vscode
+# Editor
+.vscode/
+.idea/
 *.swp
 *.swo
 
 # Logs
 *.log
 
-# Dependencies (if any get added later)
+# Dependencies (if you add any build tools later)
 node_modules/
-
-# Build output (if any build process is added)
-dist/
-build/
