@@ -19,7 +19,7 @@
     
     <title>SKAR</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="stylesheet" href="style.css?v=20251010">
+    <link rel="stylesheet" href="style.css?v=20251010c">
 </head>
 <body>
     <!-- Top Header with Logo -->
@@ -118,59 +118,80 @@
         </section>
 
         <!-- Perfume View -->
-        <section class="shop-view hidden" id="perfumeView">
-            <div class="product-grid" id="perfumeGrid">
+        <section class="perfume-view hidden" id="perfumeView">
+            <div class="perfume-stories">
                 <!-- Desert Wind -->
-                <article class="product-card" data-perfume="desert-wind">
-                    <div class="product-image-container">
+                <article class="perfume-story-card" data-perfume="desert-wind">
+                    <div class="perfume-story-image">
                         <img src="images/perfume-desert-wind.svg" alt="Desert Wind Perfume Pod">
                         <span class="stock-indicator">8 left</span>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Desert Wind</h3>
-                        <p class="product-description">warm amber / leather</p>
-                        <p class="product-price">
-                            <span class="price-amount">89</span>
-                            <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
-                        </p>
+                    <div class="perfume-story-content">
+                        <h3 class="perfume-story-title">Desert Wind</h3>
+                        <div class="perfume-story-text">
+                            <p>they call it the shamal. the wind that sweeps through the empty quarter at dusk. it carries with it the warmth of sun-baked leather and ancient amber.</p>
+                            <p>this is the scent of the wanderer. the one who walks the dunes alone. who knows that solitude isn't loneliness—it's clarity.</p>
+                            <p>warm amber meets weathered leather. no sweetness. no apology. just the honest smell of the desert at the edge of night.</p>
+                        </div>
+                        <div class="perfume-story-meta">
+                            <p class="perfume-notes">warm amber / leather</p>
+                            <p class="perfume-price">
+                                <span class="price-amount">89</span>
+                                <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
+                            </p>
+                        </div>
                     </div>
                 </article>
 
                 <!-- Riyadh Night -->
-                <article class="product-card" data-perfume="riyadh-night">
-                    <div class="product-image-container">
+                <article class="perfume-story-card" data-perfume="riyadh-night">
+                    <div class="perfume-story-image">
                         <img src="images/perfume-riyadh-night.svg" alt="Riyadh Night Perfume Pod">
                         <span class="stock-indicator">5 left</span>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Riyadh Night</h3>
-                        <p class="product-description">oud / rose / spice</p>
-                        <p class="product-price">
-                            <span class="price-amount">89</span>
-                            <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
-                        </p>
+                    <div class="perfume-story-content">
+                        <h3 class="perfume-story-title">Riyadh Night</h3>
+                        <div class="perfume-story-text">
+                            <p>when the city lights come on and the heat finally breaks. when al-mamlaka tower glows against the dark. when the streets fill with possibility.</p>
+                            <p>this is the scent of arrival. of the moment between who you were and who you're becoming. oud anchors you. rose softens you. spice reminds you that you're alive.</p>
+                            <p>it's not trying to be anything. it already is everything. riyadh after sunset. confident. magnetic. yours.</p>
+                        </div>
+                        <div class="perfume-story-meta">
+                            <p class="perfume-notes">oud / rose / spice</p>
+                            <p class="perfume-price">
+                                <span class="price-amount">89</span>
+                                <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
+                            </p>
+                        </div>
                     </div>
                 </article>
 
                 <!-- Sand Dune -->
-                <article class="product-card" data-perfume="sand-dune">
-                    <div class="product-image-container">
+                <article class="perfume-story-card" data-perfume="sand-dune">
+                    <div class="perfume-story-image">
                         <img src="images/perfume-sand-dune.svg" alt="Sand Dune Perfume Pod">
                         <span class="stock-indicator">12 left</span>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Sand Dune</h3>
-                        <p class="product-description">sandalwood / vanilla</p>
-                        <p class="product-price">
-                            <span class="price-amount">89</span>
-                            <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
-                        </p>
+                    <div class="perfume-story-content">
+                        <h3 class="perfume-story-title">Sand Dune</h3>
+                        <div class="perfume-story-text">
+                            <p>some people chase storms. you chase silence. the kind you only find at the crest of a dune, where the world drops away and there's nothing but sand and sky.</p>
+                            <p>sandalwood grounds you like prayer. vanilla whispers softly, the way home feels when you've been gone too long. together they make something quiet. something true.</p>
+                            <p>this is for the ones who don't need to announce themselves. who understand that real confidence is calm. who know that less is always more.</p>
+                        </div>
+                        <div class="perfume-story-meta">
+                            <p class="perfume-notes">sandalwood / vanilla</p>
+                            <p class="perfume-price">
+                                <span class="price-amount">89</span>
+                                <img src="Saudi_Riyal_Symbol.svg" alt="SAR" class="sar-symbol">
+                            </p>
+                        </div>
                     </div>
                 </article>
 
                 <!-- Royal Oud (Locked) -->
-                <article class="product-card locked-product" data-perfume="royal-oud">
-                    <div class="product-image-container">
+                <article class="perfume-story-card locked-perfume" data-perfume="royal-oud">
+                    <div class="perfume-story-image">
                         <img src="images/perfume-royal-oud.svg" alt="Royal Oud Perfume Pod">
                         <div class="lock-overlay">
                             <svg class="lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -179,9 +200,13 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Royal Oud</h3>
-                        <p class="product-status">Invite Only</p>
+                    <div class="perfume-story-content">
+                        <h3 class="perfume-story-title">Royal Oud</h3>
+                        <div class="perfume-story-text">
+                            <p>some stories aren't told. they're earned.</p>
+                            <p>this is the scent we keep for those who understand what it means to wait. who know that the best things in life don't come from stores, but from trust.</p>
+                        </div>
+                        <p class="perfume-status">Invite Only</p>
                     </div>
                 </article>
             </div>
@@ -236,7 +261,7 @@
         </div>
     </div>
 
-    <script src="main.js?v=20251010"></script>
+    <script src="main.js?v=20251010c"></script>
 </body>
 </html>
 

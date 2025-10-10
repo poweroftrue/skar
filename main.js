@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const checkoutModal = document.getElementById('checkoutModal');
     const checkoutClose = document.getElementById('checkoutClose');
     const productCards = document.querySelectorAll('.product-card:not(.locked-product)');
+    const perfumeStoryCards = document.querySelectorAll('.perfume-story-card:not(.locked-perfume)');
     
     // Product data
     const products = {
@@ -156,6 +157,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Close checkout modal
     function closeCheckout() {
+        // Don't close if already closing
+        if (checkoutModal.classList.contains('closing')) {
+            return;
+        }
+        
         checkoutModal.classList.add('closing');
         
         setTimeout(() => {
@@ -165,11 +171,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300); // Match the animation duration
     }
     
-    // Add click handlers to available product cards (both cases and perfumes)
+    // Add click handlers to available product cards (cases)
     productCards.forEach(card => {
         card.addEventListener('click', () => {
-            // Try getting data-color (for cases) or data-perfume (for perfumes)
-            const productKey = card.getAttribute('data-color') || card.getAttribute('data-perfume');
+            const productKey = card.getAttribute('data-color');
+            openCheckout(productKey);
+        });
+        
+        // Add cursor pointer style
+        card.style.cursor = 'pointer';
+    });
+    
+    // Add click handlers to perfume story cards
+    perfumeStoryCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const productKey = card.getAttribute('data-perfume');
             openCheckout(productKey);
         });
         
