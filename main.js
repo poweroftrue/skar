@@ -246,13 +246,21 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Cart functions
     function addToCart(productKey, quantity = 1) {
-        if (!products[productKey]) return;
+        console.log('addToCart called with:', productKey, quantity);
+        console.log('products[productKey]:', products[productKey]);
+        
+        if (!products[productKey]) {
+            console.log('Product not found:', productKey);
+            return;
+        }
         
         if (cart[productKey]) {
             cart[productKey] += quantity;
         } else {
             cart[productKey] = quantity;
         }
+        
+        console.log('Cart after adding:', cart);
         
         saveCart();
         updateCartCount();
@@ -268,6 +276,14 @@ document.addEventListener('DOMContentLoaded', () => {
             updateCartCount();
             updateCartView();
         }
+    }
+    
+    function emptyCart() {
+        cart = {};
+        saveCart();
+        updateCartCount();
+        updateCartView();
+        showCartFeedback('cart emptied');
     }
     
     function updateCartQuantity(productKey, quantity) {
@@ -289,7 +305,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function getCartItemCount() {
-        return Object.values(cart).reduce((total, quantity) => total + quantity, 0);
+        const count = Object.values(cart).reduce((total, quantity) => total + quantity, 0);
+        console.log('getCartItemCount called, cart:', cart, 'count:', count);
+        return count;
     }
     
     function getCartTotal() {
@@ -305,6 +323,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const mobileCount = document.getElementById('mobileCartCount');
         const desktopCartItem = document.querySelector('.sidebar .cart-menu-item');
         const mobileCartItem = document.querySelector('.mobile-nav .cart-menu-item');
+        
+        console.log('updateCartCount called, count:', count);
+        console.log('desktopCount element:', desktopCount);
+        console.log('mobileCount element:', mobileCount);
+        console.log('desktopCartItem element:', desktopCartItem);
+        console.log('mobileCartItem element:', mobileCartItem);
         
         if (desktopCount) desktopCount.textContent = count;
         if (mobileCount) mobileCount.textContent = count;
@@ -380,6 +404,14 @@ document.addEventListener('DOMContentLoaded', () => {
             cartTotalAmount.textContent = getCartTotal();
             cartSummary.style.display = 'block';
             cartActions.style.display = 'block';
+            
+            // Add empty cart button to actions
+            cartActions.innerHTML = `
+                <div style="display: flex; gap: 12px;">
+                    <button class="cart-btn secondary" onclick="emptyCart()">empty cart</button>
+                    <button class="cart-btn primary" id="checkoutBtn">checkout</button>
+                </div>
+            `;
         }
     }
     
@@ -424,33 +456,30 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
     updateCartView();
     
-    // Scroll detection for header collapse
-    let isScrolled = false;
-    const scrollThreshold = 50;
-    const topHeader = document.querySelector('.top-header');
-    
-    function handleScroll() {
-        const scrollY = window.scrollY;
-        const shouldCollapse = scrollY > scrollThreshold;
-        
-        if (shouldCollapse !== isScrolled && topHeader) {
-            isScrolled = shouldCollapse;
-            if (shouldCollapse) {
-                topHeader.classList.add('collapsed');
-            } else {
-                topHeader.classList.remove('collapsed');
-            }
-        }
-    }
-    
-    // Add scroll listener
-    window.addEventListener('scroll', handleScroll, { passive: true });
     
     // Expose cart functions globally for onclick handlers
     window.addToCart = addToCart;
     window.removeFromCart = removeFromCart;
     window.updateCartQuantity = updateCartQuantity;
+    window.emptyCart = emptyCart;
     window.navigateTo = navigateTo;
+    
+    // Add item directly to cart or show checkout modal if cart is empty
+    function addToCartDirect(productKey) {
+        const product = products[productKey];
+        if (!product) return;
+        
+        const cartEntries = Object.entries(cart);
+        
+        // If cart is empty, show checkout modal
+        if (cartEntries.length === 0) {
+            openCheckout(productKey);
+        } else {
+            // If cart has items, add directly
+            addToCart(productKey);
+            showCartFeedback(`${product.name} added to cart`);
+        }
+    }
     
     // Open checkout modal
     function openCheckout(productKey) {
@@ -479,6 +508,17 @@ document.addEventListener('DOMContentLoaded', () => {
             addToCartBtn.onclick = () => {
                 addToCart(productKey);
                 closeCheckout();
+            };
+        }
+        
+        // Update buy now button
+        const buyNowBtn = checkoutModal.querySelector('.checkout-btn.primary');
+        if (buyNowBtn) {
+            buyNowBtn.onclick = () => {
+                addToCart(productKey);
+                closeCheckout();
+                // Navigate to cart for immediate checkout
+                navigateTo('/cart');
             };
         }
         
@@ -526,7 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
     productCards.forEach(card => {
         card.addEventListener('click', () => {
             const productKey = card.getAttribute('data-color');
-            openCheckout(productKey);
+            addToCartDirect(productKey);
         });
         
         // Add cursor pointer style
@@ -552,8 +592,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 navigateTo(storyMap[storyKey]);
             } else if (perfumeKey) {
-                // Open checkout for add to cart
-                openCheckout(perfumeKey);
+                // Add directly to cart
+                addToCartDirect(perfumeKey);
             }
         });
     });
@@ -572,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
     storyCTAButtons.forEach(button => {
         button.addEventListener('click', () => {
             const perfumeKey = button.getAttribute('data-perfume');
-            openCheckout(perfumeKey);
+            addToCartDirect(perfumeKey);
         });
     });
     
@@ -581,7 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
     quickBuyButtons.forEach(button => {
         button.addEventListener('click', () => {
             const perfumeKey = button.getAttribute('data-perfume');
-            openCheckout(perfumeKey);
+            addToCartDirect(perfumeKey);
         });
     });
     
@@ -645,17 +685,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Cart Checkout
     // ========================================
     
-    // Handle cart checkout button
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', () => {
+    // Handle cart checkout button (use event delegation for dynamic buttons)
+    document.addEventListener('click', (e) => {
+        if (e.target && e.target.id === 'checkoutBtn') {
             const cartEntries = Object.entries(cart);
             if (cartEntries.length === 0) return;
             
             // Show checkout confirmation
             showCheckoutConfirmation();
-        });
-    }
+        }
+    });
     
     function showCheckoutConfirmation() {
         const total = getCartTotal();
