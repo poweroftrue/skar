@@ -424,6 +424,7 @@ a {
     backdrop-filter: blur(8px);
     z-index: 9999;
     animation: fadeIn 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .checkout-overlay.active {
@@ -637,7 +638,25 @@ a {
     /* Fix for mobile overlay issues */
     .checkout-overlay:not(.active) {
         display: none !important;
-        pointer-events: none;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    
+    /* Ensure proper z-index stacking on mobile */
+    .checkout-overlay {
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+        -webkit-perspective: 1000;
+        perspective: 1000;
+    }
+    
+    /* Fix for iOS Safari */
+    .checkout-modal {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
     }
 }
 

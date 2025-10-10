@@ -232,9 +232,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const product = products[productKey];
         if (!product) return;
         
-        // Reset modal state to prevent issues from previous incomplete animations
+        // Complete reset of overlay state
         checkoutOverlay.style.display = '';
+        checkoutOverlay.style.opacity = '';
+        checkoutOverlay.style.pointerEvents = '';
+        checkoutOverlay.style.visibility = '';
         checkoutModal.classList.remove('closing');
+        
+        // Force layout recalculation
+        checkoutOverlay.offsetHeight;
         
         // Populate modal with product data
         document.getElementById('checkoutProductImage').src = product.image;
@@ -242,9 +248,11 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('checkoutProductName').textContent = product.name;
         document.getElementById('checkoutProductPrice').textContent = product.price;
         
-        // Show modal
-        checkoutOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        // Small delay to ensure clean state before showing
+        setTimeout(() => {
+            checkoutOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        }, 10);
     }
     
     // Close checkout modal
@@ -261,11 +269,22 @@ document.addEventListener('DOMContentLoaded', () => {
             checkoutModal.classList.remove('closing');
             document.body.style.overflow = ''; // Restore scrolling
             
-            // Force reset overlay display on mobile to prevent stuck black screen
+            // Comprehensive fix for mobile overlay issues
             checkoutOverlay.style.display = 'none';
+            checkoutOverlay.style.opacity = '0';
+            checkoutOverlay.style.pointerEvents = 'none';
+            checkoutOverlay.style.visibility = 'hidden';
+            
+            // Force repaint
+            checkoutOverlay.offsetHeight;
+            
+            // Reset after a short delay
             setTimeout(() => {
-                checkoutOverlay.style.display = ''; // Reset to CSS default
-            }, 10);
+                checkoutOverlay.style.display = '';
+                checkoutOverlay.style.opacity = '';
+                checkoutOverlay.style.pointerEvents = '';
+                checkoutOverlay.style.visibility = '';
+            }, 50);
         }, 300); // Match the animation duration
     }
     
@@ -342,6 +361,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
+    // Add touch event handling for mobile
+    let touchStartY = 0;
+    let touchEndY = 0;
+    
+    checkoutModal.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    checkoutModal.addEventListener('touchend', (e) => {
+        touchEndY = e.changedTouches[0].clientY;
+        
+        // If swiped down more than 50px, close the modal
+        if (touchStartY - touchEndY < -50) {
+            closeCheckout();
+        }
+    }, { passive: true });
+    
+    // Prevent default touch behavior on overlay to avoid issues
+    checkoutOverlay.addEventListener('touchmove', (e) => {
+        if (e.target === checkoutOverlay) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
     // Close modal on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && checkoutOverlay.classList.contains('active')) {
@@ -363,4 +406,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle initial page load
     const initialPath = window.location.pathname;
     navigateTo(initialPath, false);
+    
+    // Failsafe mechanism for mobile overlay issues
+    setInterval(() => {
+        // Check if overlay is visible but doesn't have active class
+        if (checkoutOverlay && 
+            !checkoutOverlay.classList.contains('active') && 
+            (getComputedStyle(checkoutOverlay).display !== 'none' || 
+             getComputedStyle(checkoutOverlay).opacity !== '0')) {
+            // Force hide the overlay
+            checkoutOverlay.style.display = 'none';
+            checkoutOverlay.style.opacity = '0';
+            checkoutOverlay.style.visibility = 'hidden';
+            checkoutOverlay.style.pointerEvents = 'none';
+            document.body.style.overflow = '';
+        }
+    }, 500); // Check every 500ms
 });
