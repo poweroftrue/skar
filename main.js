@@ -357,7 +357,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // Empty cart state
             cartItems.innerHTML = `
                 <div class="cart-empty">
-                    <div class="cart-empty-icon">🛒</div>
+                    <div class="cart-empty-icon">
+                        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M8 8h48l-4 24H12L8 8z"/>
+                            <circle cx="20" cy="52" r="4"/>
+                            <circle cx="44" cy="52" r="4"/>
+                            <path d="M12 36h40"/>
+                        </svg>
+                    </div>
                     <h3 class="cart-empty-title">your cart is empty</h3>
                     <p class="cart-empty-text">add some items to get started</p>
                     <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
