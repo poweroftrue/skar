@@ -3,6 +3,91 @@
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize background video
+    const backgroundVideo = document.querySelector('.background-video');
+    if (backgroundVideo) {
+        // Force video reload to ensure new source is loaded
+        backgroundVideo.load();
+        
+        // Ensure video is properly configured
+        backgroundVideo.muted = true;
+        backgroundVideo.playsInline = true;
+        backgroundVideo.loop = true;
+        backgroundVideo.autoplay = true;
+        
+        // Handle autoplay restrictions
+        const playVideo = () => {
+            if (backgroundVideo.paused) {
+                backgroundVideo.play().catch(error => {
+                    console.log('Video autoplay failed:', error);
+                    // Show subtle play button overlay if needed
+                    showPlayButton();
+                });
+            }
+        };
+        
+        // Try to play immediately
+        setTimeout(playVideo, 100);
+        
+        // Also try when video can play
+        backgroundVideo.addEventListener('canplay', playVideo);
+        backgroundVideo.addEventListener('loadeddata', playVideo);
+        
+        // Ensure video is muted for autoplay compliance
+        backgroundVideo.addEventListener('loadstart', () => {
+            backgroundVideo.muted = true;
+        });
+        
+        // Handle video errors
+        backgroundVideo.addEventListener('error', (e) => {
+            console.log('Video error:', e);
+            // Fallback to static background
+            backgroundVideo.style.display = 'none';
+        });
+        
+        // Function to show play button if autoplay fails
+        function showPlayButton() {
+            const playButton = document.createElement('div');
+            playButton.style.cssText = `
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 60px;
+                height: 60px;
+                background-color: rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10;
+                transition: all 0.3s ease;
+            `;
+            playButton.innerHTML = '▶';
+            playButton.style.fontSize = '20px';
+            playButton.style.color = 'rgba(255, 255, 255, 0.8)';
+            
+            playButton.addEventListener('click', () => {
+                backgroundVideo.play();
+                playButton.remove();
+            });
+            
+            playButton.addEventListener('mouseenter', () => {
+                playButton.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                playButton.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+            });
+            
+            playButton.addEventListener('mouseleave', () => {
+                playButton.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                playButton.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+            });
+            
+            document.querySelector('.video-background-section').appendChild(playButton);
+        }
+    }
+    
     const desktopMenuItems = document.querySelectorAll('.menu-item');
     const mobileMenuItems = document.querySelectorAll('.mobile-menu-item');
     const categoryTitle = document.getElementById('categoryTitle');
