@@ -24,15 +24,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // Set volume to 0 for extra safety
         backgroundVideo.volume = 0;
         
-        // Optimize for mobile performance
+        // Optimize for mobile performance - delay video load to prioritize page content
         if (isMobile) {
-            backgroundVideo.setAttribute('preload', 'metadata');
+            backgroundVideo.setAttribute('preload', 'none');
+            // Delay video load on mobile for better perceived performance
+            setTimeout(() => {
+                backgroundVideo.setAttribute('preload', 'metadata');
+                backgroundVideo.load();
+            }, 500);
         } else {
             backgroundVideo.setAttribute('preload', 'auto');
+            // Load immediately on desktop
+            backgroundVideo.load();
         }
-        
-        // Force video reload to ensure proper initialization
-        backgroundVideo.load();
         
         // Enhanced play function with retry logic
         let playAttempts = 0;
