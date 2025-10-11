@@ -3,51 +3,154 @@
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize background video
+    // Initialize background video with enhanced mobile and Safari support
     const backgroundVideo = document.querySelector('.background-video');
     if (backgroundVideo) {
-        // Force video reload to ensure new source is loaded
-        backgroundVideo.load();
+        // Detect Safari and mobile browsers
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
         
-        // Ensure video is properly configured
+        // Enhanced configuration for maximum compatibility
         backgroundVideo.muted = true;
+        backgroundVideo.setAttribute('muted', '');
+        backgroundVideo.setAttribute('playsinline', '');
+        backgroundVideo.setAttribute('webkit-playsinline', '');
         backgroundVideo.playsInline = true;
         backgroundVideo.loop = true;
         backgroundVideo.autoplay = true;
+        backgroundVideo.defaultMuted = true;
         
-        // Handle autoplay restrictions
-        const playVideo = () => {
-            if (backgroundVideo.paused) {
-                backgroundVideo.play().catch(error => {
-                    console.log('Video autoplay failed:', error);
-                    // Show subtle play button overlay if needed
+        // Set volume to 0 for extra safety
+        backgroundVideo.volume = 0;
+        
+        // Optimize for mobile performance
+        if (isMobile) {
+            backgroundVideo.setAttribute('preload', 'metadata');
+        } else {
+            backgroundVideo.setAttribute('preload', 'auto');
+        }
+        
+        // Force video reload to ensure proper initialization
+        backgroundVideo.load();
+        
+        // Enhanced play function with retry logic
+        let playAttempts = 0;
+        const maxAttempts = 5;
+        
+        const playVideo = async () => {
+            if (playAttempts >= maxAttempts) {
+                console.log('Max video play attempts reached');
+                return;
+            }
+            
+            playAttempts++;
+            
+            try {
+                if (backgroundVideo.paused) {
+                    // Ensure muted state before play
+                    backgroundVideo.muted = true;
+                    backgroundVideo.volume = 0;
+                    
+                    await backgroundVideo.play();
+                    console.log('Video playing successfully');
+                }
+            } catch (error) {
+                console.log(`Video autoplay attempt ${playAttempts} failed:`, error.message);
+                
+                // Retry with delay for mobile browsers
+                if (playAttempts < maxAttempts) {
+                    setTimeout(playVideo, 500);
+                } else if (isMobile || isSafari) {
+                    // Show play button only on mobile/Safari after all attempts fail
                     showPlayButton();
-                });
+                }
             }
         };
         
-        // Try to play immediately
+        // Multiple trigger points for video playback
         setTimeout(playVideo, 100);
         
-        // Also try when video can play
-        backgroundVideo.addEventListener('canplay', playVideo);
-        backgroundVideo.addEventListener('loadeddata', playVideo);
-        
-        // Ensure video is muted for autoplay compliance
-        backgroundVideo.addEventListener('loadstart', () => {
-            backgroundVideo.muted = true;
+        backgroundVideo.addEventListener('loadedmetadata', () => {
+            console.log('Video metadata loaded');
+            playVideo();
         });
         
-        // Handle video errors
+        backgroundVideo.addEventListener('canplay', () => {
+            console.log('Video can play');
+            playVideo();
+        });
+        
+        backgroundVideo.addEventListener('canplaythrough', () => {
+            console.log('Video can play through');
+            playVideo();
+        });
+        
+        // Handle visibility change (iOS Safari issue)
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && backgroundVideo.paused) {
+                playVideo();
+            }
+        });
+        
+        // Handle page focus (Safari issue)
+        window.addEventListener('focus', () => {
+            if (backgroundVideo.paused) {
+                playVideo();
+            }
+        });
+        
+        // Interaction-based fallback for iOS
+        if (isIOS) {
+            const startOnInteraction = () => {
+                if (backgroundVideo.paused) {
+                    playVideo();
+                }
+                // Remove listeners after first interaction
+                document.removeEventListener('touchstart', startOnInteraction);
+                document.removeEventListener('click', startOnInteraction);
+            };
+            
+            document.addEventListener('touchstart', startOnInteraction, { once: true, passive: true });
+            document.addEventListener('click', startOnInteraction, { once: true });
+        }
+        
+        // Ensure video stays muted
+        backgroundVideo.addEventListener('volumechange', () => {
+            if (backgroundVideo.volume > 0) {
+                backgroundVideo.volume = 0;
+                backgroundVideo.muted = true;
+            }
+        });
+        
+        // Handle video errors gracefully
         backgroundVideo.addEventListener('error', (e) => {
             console.log('Video error:', e);
-            // Fallback to static background
-            backgroundVideo.style.display = 'none';
+            const error = backgroundVideo.error;
+            if (error) {
+                console.log('Error code:', error.code, 'Message:', error.message);
+            }
+            // Fallback: hide video but keep background pattern
+            backgroundVideo.style.opacity = '0';
         });
         
-        // Function to show play button if autoplay fails
+        // Monitor playback stalls
+        backgroundVideo.addEventListener('stalled', () => {
+            console.log('Video stalled, attempting to resume...');
+            setTimeout(playVideo, 1000);
+        });
+        
+        backgroundVideo.addEventListener('suspend', () => {
+            console.log('Video suspended');
+        });
+        
+        // Function to show play button if autoplay fails completely
         function showPlayButton() {
+            // Check if button already exists
+            if (document.querySelector('.video-play-button')) return;
+            
             const playButton = document.createElement('div');
+            playButton.className = 'video-play-button';
             playButton.style.cssText = `
                 position: absolute;
                 top: 50%;
@@ -69,9 +172,15 @@ document.addEventListener('DOMContentLoaded', () => {
             playButton.style.fontSize = '20px';
             playButton.style.color = 'rgba(255, 255, 255, 0.8)';
             
-            playButton.addEventListener('click', () => {
-                backgroundVideo.play();
-                playButton.remove();
+            playButton.addEventListener('click', async () => {
+                try {
+                    backgroundVideo.muted = true;
+                    await backgroundVideo.play();
+                    playButton.style.opacity = '0';
+                    setTimeout(() => playButton.remove(), 300);
+                } catch (error) {
+                    console.log('Manual play failed:', error);
+                }
             });
             
             playButton.addEventListener('mouseenter', () => {
