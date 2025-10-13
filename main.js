@@ -635,15 +635,30 @@ document.addEventListener('DOMContentLoaded', () => {
     function showCartNotification() {
         const notification = document.getElementById('cartNotification');
         const notificationText = document.getElementById('cartNotificationText');
+        const viewCartBtn = document.getElementById('viewCartBtn');
         
         if (!notification) return;
         
         // Update text based on cart count
         const itemCount = getCartItemCount();
-        if (itemCount === 1) {
+        if (itemCount === 0) {
+            notificationText.textContent = 'cart emptied';
+            // Hide the view cart button when cart is empty
+            if (viewCartBtn) {
+                viewCartBtn.style.display = 'none';
+            }
+        } else if (itemCount === 1) {
             notificationText.textContent = '1 item in cart';
+            // Show the view cart button when cart has items
+            if (viewCartBtn) {
+                viewCartBtn.style.display = '';
+            }
         } else {
             notificationText.textContent = `${itemCount} items in cart`;
+            // Show the view cart button when cart has items
+            if (viewCartBtn) {
+                viewCartBtn.style.display = '';
+            }
         }
         
         // Show notification and keep it visible
